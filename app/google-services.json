@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "149118059922",
+    "project_id": "money-usage-e7c34",
+    "storage_bucket": "money-usage-e7c34.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149118059922:android:8c203acb050a3921392d4b",
+        "android_client_info": {
+          "package_name": "com.example.moneyusage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "149118059922-e4p16p33kkjsae33uo42fi7oblcuispl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaFd4BYfwrG9CHM3AAOpZ9d8aJ7Un9RuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "149118059922-e4p16p33kkjsae33uo42fi7oblcuispl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
