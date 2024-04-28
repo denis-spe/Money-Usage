@@ -40,7 +40,6 @@ class MainActivity : ComponentActivity() {
         // Start the app
         val app = App(
             auth = authentication,
-            currentUser = currentUser,
             firestore = firestore
         )
 
@@ -60,7 +59,7 @@ class MainActivity : ComponentActivity() {
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        currentUser = authentication.currentUser!!
+//        currentUser = authentication.currentUser!!
     }
 }
 

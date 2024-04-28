@@ -1,7 +1,11 @@
 package com.example.moneyusage
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.moneyusage.pages.RegistrationPage
 import com.example.moneyusage.ui.theme.MoneyUsageTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -18,9 +22,14 @@ class App(
     /**
      * App starting point
      */
+    @SuppressLint("UnrememberedMutableState")
     @Composable
     fun Start(){
+        // MutableState object
+        val input = mutableStateOf(TextFieldValue(""))
 
+        // Run the sign in page
+        RegistrationPage(input).MoreInformation()
     }
 
     /**
