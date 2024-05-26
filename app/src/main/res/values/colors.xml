@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="income">#4CAF50</color>
+    <color name="expend">#E54338</color>
+    <color name="debt">#FFC107</color>
+    <color name="lend">#2196F3</color>
 </resources>
