@@ -48,7 +48,7 @@ fun AnimatedPieChart(
     data: List<PieData>,
     modifier: Modifier = Modifier,
     size: Dp = 110.dp,
-    fontSize: TextUnit = 12.sp
+    fontSize: TextUnit = 10.sp
     ) {
     val localModifier = modifier.size(size)
     val total = data.fold(0f) { acc, pieData ->
@@ -102,7 +102,8 @@ fun AnimatedPieChart(
                             fontSize = fontSize,
                             color = it.color)
 
-                        Text(text = it.value.toString().limitMoneyDigits(),
+                        Text(text = it.value.toString()
+                            .limitMoneyDigits(limitMillonAndHundred = true),
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = fontSize,
                             color = it.color)

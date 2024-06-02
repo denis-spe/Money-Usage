@@ -162,16 +162,16 @@ class LandingPage {
 
             item {
                 val currentIncomeAndExp = listOf(
-                    PieData("Income", 223.00,
+                    PieData("Income", 200230.990,
                         color = colorResource(id=R.color.income)),
-                    PieData("Expense", 1123000.5,
+                    PieData("Expense", 19800_0967.9887,
                         color = colorResource(id=R.color.expend)),
                 )
 
                 val debtAndLend = listOf(
-                    PieData("Debt", 98.00,
+                    PieData("Debt", 989.00,
                         color = colorResource(id=R.color.debt)),
-                    PieData("Lend", 3456.5,
+                    PieData("Lend", 3.000000000000988E12,
                         color = colorResource(id=R.color.lend)),
                 )
 

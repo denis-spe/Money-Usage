@@ -1,6 +1,7 @@
 package com.example.moneyusage.helper
 
 import android.annotation.SuppressLint
+import kotlin.math.pow
 
 /**
  * Format a string as money
@@ -15,21 +16,50 @@ fun String.toMoneyFormat() : String{
         .chunked(3)
         .joinToString(",")
         .reversed()
-
-    if (formattedString.contains(".")) {
-        val (money, cents) = cleanString.split(".")
-        return "$money.$cents"
-    }
     return formattedString
 }
 
-fun String.limitMoneyDigits(): String {
-    val number = this.substringBefore(".").toDoubleOrNull() ?: return this
+/**
+ * Limit the number of digits in a string to 4
+ */
+fun String.limitMoneyDigits(
+    limitMillonAndHundred: Boolean = false
+): String {
+    val amountSymbol: String
+    val wholeNumber: String
+    var afterDecimalNumber: String
+    val fullMoneyFormat: String
 
-    return when {
-        number >= 1_000_000_000 -> "${(number / 1_000_000_000)}B"
-        number >= 1_000_000 -> "${(number / 1_000_000)}M"
-        number >= 1_000 -> "${(number / 1_000)}K"
-        else -> this
+    if (this.contains("E")){
+        // Get the amount symbol
+        amountSymbol = when(this.substringAfter("E").toInt()){
+            7 -> "M"
+            8 -> "M"
+            9 -> "B"
+            10 -> "B"
+            11 -> "B"
+            12 -> "T"
+            else -> ""
+        }
+        // Take the whole number, after decimal and amount symbol
+        wholeNumber = this.substringBefore(".")
+
+        // Take out the number after the decimal point then before the exponent
+        afterDecimalNumber = this.substringAfter(".")
+            .substringBefore("E")
+
+        // Limit the number of digits
+        afterDecimalNumber = afterDecimalNumber.substring(0, 2)
+
+        // Combine the whole number, after decimal and amount symbol
+        fullMoneyFormat = "$wholeNumber.${afterDecimalNumber}$amountSymbol"
+    } else {
+        fullMoneyFormat = if (this.substringBefore(".").length == 7
+            && limitMillonAndHundred)
+            ((this.toDouble() / 1_000_000).toInt()).toString() + "M";
+        else
+            this.substringBefore(".").toMoneyFormat()
     }
+
+    return fullMoneyFormat;
 }

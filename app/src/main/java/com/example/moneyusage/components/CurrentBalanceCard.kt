@@ -31,6 +31,7 @@ import com.example.moneyusage.charts.AnimatedPieChart
 import com.example.moneyusage.dataclasses.PieData
 import com.example.moneyusage.helper.limitMoneyDigits
 import com.example.moneyusage.helper.toMoneyFormat
+import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.P)
@@ -90,13 +91,10 @@ fun CurrentBalanceCard(
                         // String format
                         val moneyAsString = it.value.toString()
 
-                        // Format money
-                        val formattedMoney = if (it.value < 1000000)
-                            moneyAsString.toMoneyFormat()
-                        else moneyAsString.limitMoneyDigits()
-
                         Row {
-                            StyleMoneyFormat("R", formattedMoney, it.color)
+                            StyleMoneyFormat("R",
+                                moneyAsString,
+                                it.color)
                         }
                     }
                 }
@@ -108,16 +106,6 @@ fun CurrentBalanceCard(
 @Composable
 fun StyleMoneyFormat(currencySymbol: String, formattedMoney: String, color: Color) {
     Row {
-        val wholeMoney: String
-        var cents: String? = null
-        if (formattedMoney.contains(".") && formattedMoney.length < 6) {
-            val split = formattedMoney.split(".")
-            wholeMoney = split[0]
-            cents = split[1]
-        } else {
-            wholeMoney = formattedMoney
-        }
-
         Text(
             text = "$currencySymbol ",
             fontWeight = FontWeight.Bold,
@@ -126,20 +114,11 @@ fun StyleMoneyFormat(currencySymbol: String, formattedMoney: String, color: Colo
         )
 
         Text(
-            text = wholeMoney,
+            text = formattedMoney.limitMoneyDigits(limitMillonAndHundred = true),
             fontWeight = FontWeight.Bold,
             color = color,
-            fontSize = 16.sp
+            fontSize = 18.sp
         )
-
-        if (cents != null) {
-            Text(
-                text = cents,
-                fontWeight = FontWeight.Bold,
-                color = color,
-                fontSize = 12.sp
-            )
-        }
     }
 }
 
