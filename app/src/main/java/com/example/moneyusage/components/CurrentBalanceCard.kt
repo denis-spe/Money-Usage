@@ -76,7 +76,7 @@ fun CurrentBalanceCard(
                                 text = it.label,
                                 fontWeight = FontWeight.Bold,
                                 color = it.color,
-                                fontSize = 17.sp
+                                fontSize = 14.sp
                             )
                         }
                     }
@@ -110,14 +110,14 @@ fun StyleMoneyFormat(currencySymbol: String, formattedMoney: String, color: Colo
             text = "$currencySymbol ",
             fontWeight = FontWeight.Bold,
             color = color,
-            fontSize = 12.sp
+            fontSize = 8.sp
         )
 
         Text(
             text = formattedMoney.limitMoneyDigits(limitMillonAndHundred = true),
             fontWeight = FontWeight.Bold,
             color = color,
-            fontSize = 18.sp
+            fontSize = 14.sp
         )
     }
 }

@@ -4,35 +4,54 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -40,82 +59,118 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moneyusage.R
+import com.example.moneyusage.charts.AnimatedPieChart
 import com.example.moneyusage.components.CurrentBalanceCard
 import com.example.moneyusage.dataclasses.PieData
 
 class LandingPage {
-    @OptIn(ExperimentalMaterial3Api::class)
+
+    @RequiresApi(Build.VERSION_CODES.P)
     @Composable
-    fun TopBar() {
-        val iconColor = Color(
-            241,
-            237,
-            237,
-            105
-        )
+    fun TopAppBarTitle() {
+        val buttonBackgroundColor = Color.Gray.copy(alpha = 0.4f)
+        val clickedButtonColor = Color.Green.copy(alpha = 0.7f)
 
-        TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.White,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Spacer(modifier = Modifier.width(5.dp))
 
-            title = {
-                FilledIconButton(
-                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = iconColor),
-                    onClick = { /*TODO*/ }
-                ) {
-                    Text(
-                        text = "d",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color(9, 8, 8, 178),
-                        fontFamily = FontFamily(Font(resId = R.font.comfortaa))
-                    )
-                }
-            },
-
-            navigationIcon = {
-
-            },
-            actions = {
-                FilledIconButton(
-                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = iconColor),
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .width(100.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .padding(2.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "stat",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(resId = R.font.comfortaa))
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.line_chart),
-                            contentDescription = "line_chart",
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-
-                FilledIconButton(
-                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = iconColor),
-                    onClick = { /*TODO*/ }
-                ) {
-                    Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = "MoreVert")
-                }
+            Button(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = clickedButtonColor,
+                )
+            ) {
+                Text("All",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
             }
 
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Button(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonBackgroundColor,
+                )
+            ) {
+                Text("Today",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Button(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonBackgroundColor,
+                )
+            ) {
+                Text("Yesterday",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    @Composable
+    fun TopAppBarNavigationIcon(){
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(start = 10.dp)
+        ) {
+            FilledIconButton(
+                modifier = Modifier
+                    .size(30.dp),
+                colors = IconButtonDefaults.filledIconButtonColors(
+                    containerColor = Color.Magenta.copy(alpha = 0.7f, red = 0.9f)),
+                onClick = { /*TODO*/ }
+            ) {
+
+                Text(
+                    text = "D",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun TopAppBarActions() {
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(
+                modifier = Modifier.size(25.dp),
+                painter = painterResource(id = if (isSystemInDarkTheme())
+                    R.drawable.moon else R.drawable.sun
+                ),
+                contentDescription = "light mode")
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    @Composable
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun TopBar() {
+
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(),
+            title = { TopAppBarTitle() },
+            navigationIcon = { TopAppBarNavigationIcon() },
+            actions = { TopAppBarActions() }
         )
     }
 
@@ -143,10 +198,36 @@ class LandingPage {
     fun ProfileDetailDrawer() {
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @RequiresApi(Build.VERSION_CODES.P)
     @Composable
-    fun Content() {
+    fun Content(
+        innerPadding: PaddingValues
+    ) {
+
+        val currentIncomeAndExp = listOf(
+            PieData(
+                "Income", 200230.990,
+                color = colorResource(id = R.color.income)
+            ),
+            PieData(
+                "Expense", 19800_0967.9887,
+                color = colorResource(id = R.color.expend)
+            ),
+        )
+
+        val debtAndLend = listOf(
+            PieData(
+                "Debt", 989.00,
+                color = colorResource(id = R.color.debt)
+            ),
+            PieData(
+                "Lend", 3.000000000000988E12,
+                color = colorResource(id = R.color.lend)
+            ),
+        )
+
+        // Current balance card size
+        val currentBalanceCardSize = 150.dp
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -154,45 +235,62 @@ class LandingPage {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .padding(16.dp)
+                .padding(innerPadding)
         ) {
             item {
-                Spacer(modifier = Modifier.size(90.dp))
+                Spacer(modifier = Modifier.size(50.dp))
             }
 
             item {
-                val currentIncomeAndExp = listOf(
-                    PieData("Income", 200230.990,
-                        color = colorResource(id=R.color.income)),
-                    PieData("Expense", 19800_0967.9887,
-                        color = colorResource(id=R.color.expend)),
-                )
 
-                val debtAndLend = listOf(
-                    PieData("Debt", 989.00,
-                        color = colorResource(id=R.color.debt)),
-                    PieData("Lend", 3.000000000000988E12,
-                        color = colorResource(id=R.color.lend)),
-                )
-
+                // Sub Title
                 Row(
-                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp)
                 ) {
-                    /**
-                     * Current Income and Expense Card
-                     */
-                    CurrentBalanceCard(data =currentIncomeAndExp) {
+                    Text("Current balance",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
+                Spacer(modifier = Modifier.height(20.dp))
+
+                LazyRow (
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    item {
+                        Spacer(modifier = Modifier.width(20.dp))
                     }
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                    item {
+                        CurrentBalanceCard(
+                            data = currentIncomeAndExp,
+                            size = currentBalanceCardSize
+                        ){
 
-                    /**
-                     * Current Debt and Loan Card
-                     */
-                    CurrentBalanceCard(data =debtAndLend, size = 210.dp) {
-
+                        }
                     }
+
+                    item {
+                        Spacer(modifier = Modifier.width(20.dp))
+                    }
+
+                    item {
+                        CurrentBalanceCard(
+                            data = debtAndLend,
+                            size = currentBalanceCardSize
+                        ){
+
+                        }
+                    }
+
+
                 }
             }
         }
@@ -201,25 +299,19 @@ class LandingPage {
 
     // --------- LandPage -----------
     @RequiresApi(Build.VERSION_CODES.P)
-    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
     fun LandPage() {
-        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
         Scaffold(
             modifier = Modifier
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                .fillMaxSize(),
             topBar = { TopBar() },
             bottomBar = { BottomBar() },
             snackbarHost = { SnackBarHost() },
             floatingActionButton = { FloatingActionButton() },
             floatingActionButtonPosition = FabPosition.End,
-            containerColor = MaterialTheme.colorScheme.background,
-        ) {
-            Content()
+        ) { innerPadding ->
+            Content(innerPadding)
         }
     }
 }
