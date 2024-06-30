@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.moneyusage"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.wear)
     implementation(libs.androidx.slice.core)
+    implementation(libs.androidx.ui.viewbinding)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -81,9 +82,13 @@ dependencies {
     //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-analytics")
 
-    // Adding the dependencies for Firebase Authentication and Cloud Firestore
+    // Adding the dependencies for Firebase Authentication and Cloud FireStore
     //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-auth")
+
     //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-firestore")
+
+    // Chart
+    implementation ("co.yml:ycharts:2.1.0")
 }

@@ -56,10 +56,10 @@ fun String.limitMoneyDigits(
     } else {
         fullMoneyFormat = if (this.substringBefore(".").length == 7
             && limitMillonAndHundred)
-            ((this.toDouble() / 1_000_000).toInt()).toString() + "M";
+            ((this.toDouble() / 1_000_000).toInt()).toString() + "M"
         else
             this.substringBefore(".").toMoneyFormat()
     }
 
-    return fullMoneyFormat;
+    return fullMoneyFormat
 }

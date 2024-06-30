@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -40,7 +41,6 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -62,8 +62,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import co.yml.charts.common.model.Point
 import com.example.moneyusage.R
 import com.example.moneyusage.charts.AnimatedPieChart
+import com.example.moneyusage.charts.LineChartComponent
 import com.example.moneyusage.components.CurrentBalanceCard
 import com.example.moneyusage.dataclasses.PieData
 
@@ -198,6 +200,7 @@ class LandingPage {
     fun ProfileDetailDrawer() {
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @RequiresApi(Build.VERSION_CODES.P)
     @Composable
     fun Content(
@@ -289,8 +292,66 @@ class LandingPage {
 
                         }
                     }
+                }
+            }
 
+            // Line chart Item
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
 
+                // Sub Title
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp)
+                ) {
+                    Text("Timeline chart",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Column(modifier = Modifier.padding(20.dp)
+                    ) {
+                    val pointsData: List<Point> =
+                        listOf(
+                            Point(0f, 0f),
+                            Point(1f, 90f),
+                            Point(2f, 80f),
+                            Point(3f, 50f),
+                            Point(4f, 30f),
+                            Point(5f, 23f),
+                            Point(6f, 53f),
+                            Point(7f, 69f),
+                        )
+                    LineChartComponent(
+                        data = pointsData,
+                        labelData = {
+                            when(it) {
+                                0 -> ""
+                                3 -> "Wed"
+                                4 -> "Thu"
+                                5 -> "Fri"
+                                else -> ""
+                            }
+                        },
+                        mapPopUpLabel = {
+                            x, y ->
+                            val xLabel = when(x.toInt()) {
+                                1 -> "Mon"
+                                2 -> "Tue"
+                                3 -> "Wed"
+                                4 -> "Thu"
+                                5 -> "Fri"
+                                6 -> "Sat"
+                                7 -> "Sun"
+                                else -> ""
+                            }
+                            "$xLabel : $y"
+                        }
+                    )
                 }
             }
         }
