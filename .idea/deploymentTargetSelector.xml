@@ -10,10 +10,13 @@
       </SelectionState>
       <SelectionState runConfigName="LandPagePreview - LandPagePreview">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-06-02T20:30:42.516927Z">
+        <DropdownSelection timestamp="2024-07-27T19:58:21.634401Z">
           <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="FirebaseDirectAccess" identifier="reservation=projects/money-usage-e7c34/deviceSessions/session-xm3r9rqkrlbaa" />
+            </handle>
             <template>
-              <DeviceId pluginId="FirebaseDirectAccess" type="TEMPLATE" identifier="model_id=shiba/34" />
+              <DeviceId pluginId="FirebaseDirectAccess" type="TEMPLATE" identifier="model_id=dm3q/34" />
             </template>
           </Target>
         </DropdownSelection>

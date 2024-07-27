@@ -2,21 +2,15 @@ package com.example.moneyusage.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,16 +22,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moneyusage.charts.AnimatedPieChart
-import com.example.moneyusage.dataclasses.PieData
+import com.example.moneyusage.dataclasses.PieChartData
 import com.example.moneyusage.helper.limitMoneyDigits
-import com.example.moneyusage.helper.toMoneyFormat
-import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun CurrentBalanceCard(
-    data: List<PieData>,
+    data: List<PieChartData>,
     size: Dp = 200.dp,
     onClick: () -> Unit
 ) {
@@ -47,7 +39,8 @@ fun CurrentBalanceCard(
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            if (isSystemInDarkTheme()) Color.Gray.copy(0.4f)
+            else Color.White
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
