@@ -12,7 +12,6 @@ data class Styles(
     val bottomAppBarBackgroundColor: Color = Color.Transparent,
     val topAppBarBackgroundColor: Color = Color.Transparent,
     val bottomIconSize: Dp = 35.dp,
-    val profileIconBackground: Color = Color(66, 97, 221),
     val profileIconTextColor: Color = Color.White,
     val bottomIconColor: Color = Color.Gray,
     )

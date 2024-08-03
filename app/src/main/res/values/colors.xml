@@ -7,8 +7,15 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="income">#4CAF50</color>
-    <color name="expend">#E54338</color>
-    <color name="debt">#FFC107</color>
-    <color name="lend">#2196F3</color>
+    <color name="incomeCloseColor">#4CAF50</color>
+    <color name="incomeOpenColor">#86D58A</color>
+    <color name="expenseCloseColor">#E54338</color>
+    <color name="expenseOpenColor">#E0827B</color>
+    <color name="debtCloseColor">#FFC107</color>
+    <color name="debtOpenColor">#E6D295</color>
+    <color name="lendCloseColor">#2196F3</color>
+    <color name="lendOpenColor">#7DBEF2</color>
+    <color name="openFloatingButtonContainerColor">#8D9290</color>
+    <color name="closeFloatingButtonContainerColor">#C1C5C5</color>
+    <color name="profileIconTextColor">#FF4261DD</color>
 </resources>

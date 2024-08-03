@@ -20,16 +20,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -39,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,13 +51,22 @@ import com.example.moneyusage.R
 import com.example.moneyusage.charts.LineChart
 import com.example.moneyusage.components.BottomIconButton
 import com.example.moneyusage.components.CurrentBalanceCard
+import com.example.moneyusage.components.DialogAlert
+import com.example.moneyusage.components.FloatActionButton
 import com.example.moneyusage.components.TopAppButton
 import com.example.moneyusage.dataclasses.BottomIcon
+import com.example.moneyusage.dataclasses.FloatActionButtonData
 import com.example.moneyusage.dataclasses.PieChartData
 import com.example.moneyusage.dataclasses.Styles
 import com.example.moneyusage.dataclasses.TopAppButtonArgs
 import com.example.moneyusage.dataclasses.TopAppButtonColors
-import com.example.moneyusage.helper.WeekDays.*
+import com.example.moneyusage.helper.WeekDays.Fri
+import com.example.moneyusage.helper.WeekDays.Mon
+import com.example.moneyusage.helper.WeekDays.Sat
+import com.example.moneyusage.helper.WeekDays.Sun
+import com.example.moneyusage.helper.WeekDays.Thu
+import com.example.moneyusage.helper.WeekDays.Tue
+import com.example.moneyusage.helper.WeekDays.Wed
 
 class LandingPage {
     private val styles = Styles()
@@ -87,7 +91,7 @@ class LandingPage {
             TopAppButtonColors(bgColor, textColor)
         }
 
-        val topAppButtonArgs = listOf<TopAppButtonArgs>(
+        val topAppButtonArgs = listOf(
             // All arguments
             TopAppButtonArgs(
                 "All",
@@ -120,7 +124,7 @@ class LandingPage {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
-            topAppButtonArgs.forEach{
+            topAppButtonArgs.forEach {
                 Spacer(modifier = Modifier.width(5.dp))
                 TopAppButton(
                     topAppButtonArgs = it,
@@ -142,7 +146,9 @@ class LandingPage {
                 modifier = Modifier
                     .size(40.dp),
                 colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = styles.profileIconBackground
+                    containerColor = colorResource(
+                        id = R.color.profileIconTextColor
+                    )
                 ),
                 onClick = { /*TODO*/ }
             ) {
@@ -189,11 +195,15 @@ class LandingPage {
     @SuppressLint("UnrememberedMutableState")
     @Composable
     fun BottomBar(
+        floatActionButtonClickState: MutableState<Boolean>,
         lazyState: LazyListState
     ) {
 
         val state = remember { derivedStateOf { lazyState.firstVisibleItemScrollOffset == 0 } }
-        val bottomIcons = listOf<BottomIcon>(
+        val selectState = remember { mutableStateOf("Home") }
+        val floatActionButtonAppearanceState = remember { mutableStateOf("") }
+
+        val bottomIcons = listOf(
             // Bottom Home Icon
             BottomIcon(
                 outlineIcon = painterResource(id = R.drawable.outline_home),
@@ -208,7 +218,7 @@ class LandingPage {
             BottomIcon(
                 outlineIcon = painterResource(id = R.drawable.outline_search),
                 filledIcon = painterResource(id = R.drawable.filled_search),
-                description = "Home",
+                description = "Search",
                 state = state,
                 animateDelayMillis = 700,
                 onClick = { /*TODO*/ }
@@ -218,7 +228,7 @@ class LandingPage {
             BottomIcon(
                 outlineIcon = painterResource(id = R.drawable.outline_history),
                 filledIcon = painterResource(id = R.drawable.filled_history),
-                description = "Home",
+                description = "History",
                 state = state,
                 animateDelayMillis = 1000,
                 onClick = { /*TODO*/ }
@@ -237,22 +247,35 @@ class LandingPage {
                         .padding(start = 10.dp)
                 ) {
                     bottomIcons.forEach {
-                        BottomIconButton(buttonIcon = it)
+                        BottomIconButton(
+                            buttonIcon = it,
+                            selectState = selectState
+                        )
                     }
                 }
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { /* do something */ },
-                    containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(10.dp),
-                    shape = CircleShape
 
-                ) {
-                    Icon(
-                        Icons.Filled.Add,
-                        contentDescription = "Localized description"
-                    )
+                FloatActionButton(
+                    floatActionButtonData = FloatActionButtonData(
+                        containerOpenColor = colorResource(
+                            id = R.color.openFloatingButtonContainerColor
+                        ),
+                        containerCloseColor = colorResource(
+                            id = R.color.closeFloatingButtonContainerColor
+                        ),
+                        label = "Add",
+                        onClick = {
+                            floatActionButtonClickState.value = !floatActionButtonClickState.value
+                        }
+                    ),
+                    appearanceState = floatActionButtonAppearanceState
+                )
+
+                if (floatActionButtonClickState.value) {
+                    floatActionButtonAppearanceState.value = "Add"
+                } else {
+                    floatActionButtonAppearanceState.value = ""
                 }
             }
         )
@@ -264,7 +287,76 @@ class LandingPage {
     }
 
     @Composable
-    fun FloatingAction() {
+    fun FloatingAction(
+        innerFloatActionButtonAppearanceState: MutableState<String>,
+        mainFloatActionButtonClickState: MutableState<Boolean>,
+    ) {
+
+        val floatActionButton = listOf(
+            // Income floating action button dataclass
+            FloatActionButtonData(
+                containerOpenColor = colorResource(
+                    id = R.color.incomeCloseColor
+                ),
+                containerCloseColor = colorResource(
+                    id = R.color.incomeOpenColor
+                ),
+                label = "Income",
+                onClick = {
+                }
+            ),
+
+            // Expense floating action button dataclass
+            FloatActionButtonData(
+                containerOpenColor = colorResource(
+                    id = R.color.expenseCloseColor
+                ),
+                containerCloseColor = colorResource(
+                    id = R.color.expenseOpenColor
+                ),
+                label = "Expense",
+                onClick = {
+                }
+            ),
+
+            // Debt floating action button dataclass
+            FloatActionButtonData(
+                containerOpenColor = colorResource(
+                    id = R.color.debtCloseColor
+                ),
+                containerCloseColor = colorResource(
+                    id = R.color.debtOpenColor
+                ),
+                label = "Debt",
+                onClick = {
+                }
+            ),
+
+            // Lend floating action button dataclass
+            FloatActionButtonData(
+                containerOpenColor = colorResource(
+                    id = R.color.lendCloseColor
+                ),
+                containerCloseColor = colorResource(
+                    id = R.color.lendOpenColor
+                ),
+                label = "Lend",
+                onClick = {
+                }
+            ),
+        )
+
+        if (mainFloatActionButtonClickState.value) {
+            Column {
+                floatActionButton.forEach {
+                    FloatActionButton(
+                        floatActionButtonData = it,
+                        appearanceState = innerFloatActionButtonAppearanceState
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
+        }
     }
 
     /**
@@ -274,7 +366,6 @@ class LandingPage {
     fun ProfileDetailDrawer() {
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @RequiresApi(Build.VERSION_CODES.P)
     @Composable
     fun Content(
@@ -285,22 +376,22 @@ class LandingPage {
         val currentIncomeAndExp = listOf(
             PieChartData(
                 "Income", 200230.990,
-                color = colorResource(id = R.color.income)
+                color = colorResource(id = R.color.incomeCloseColor)
             ),
             PieChartData(
                 "Expense", 19800_0967.9887,
-                color = colorResource(id = R.color.expend)
+                color = colorResource(id = R.color.expenseCloseColor)
             ),
         )
 
         val debtAndLend = listOf(
             PieChartData(
                 "Debt", 989.00,
-                color = colorResource(id = R.color.debt)
+                color = colorResource(id = R.color.debtCloseColor)
             ),
             PieChartData(
                 "Lend", 3.000000000000988E12,
-                color = colorResource(id = R.color.lend)
+                color = colorResource(id = R.color.lendCloseColor)
             ),
         )
 
@@ -475,22 +566,39 @@ class LandingPage {
     @Composable
     fun LandPage() {
         val listState = rememberLazyListState()
+        val mainFloatActionButtonClickState = remember { mutableStateOf(false) }
+        val innerFloatActionButtonAppearanceState = remember { mutableStateOf("") }
 
         Scaffold(
             modifier = Modifier
                 .fillMaxSize(),
             topBar = { TopBar() },
-            bottomBar = { BottomBar(lazyState = listState) },
+            bottomBar = {
+                BottomBar(
+                    lazyState = listState,
+                    floatActionButtonClickState = mainFloatActionButtonClickState
+                )
+            },
             snackbarHost = { SnackBarHost() },
             containerColor = MaterialTheme.colorScheme.background,
-            floatingActionButton = { FloatingAction() },
+            floatingActionButton = {
+                FloatingAction(
+                    innerFloatActionButtonAppearanceState = innerFloatActionButtonAppearanceState,
+                    mainFloatActionButtonClickState = mainFloatActionButtonClickState,
+                )
+            },
             floatingActionButtonPosition = FabPosition.End,
         ) { innerPadding ->
+
+            // Introduces the contents
             Content(
                 innerPadding = innerPadding,
                 state = listState
             )
         }
+
+        // Handle Dialog for floating action button
+        DialogAlert(state = innerFloatActionButtonAppearanceState)
     }
 }
 

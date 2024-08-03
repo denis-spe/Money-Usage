@@ -16,16 +16,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import com.example.moneyusage.dataclasses.BottomIcon
 import com.example.moneyusage.dataclasses.Styles
 
 @Composable
 fun BottomIconButton(
     buttonIcon: BottomIcon,
+    selectState: MutableState<String>,
 ){
     val styles = Styles()
 
@@ -52,9 +52,17 @@ fun BottomIconButton(
             )
             ) + shrinkVertically { it }
         ) {
-            IconButton(onClick = buttonIcon.onClick) {
+            IconButton(
+                onClick = {
+                    selectState.value = buttonIcon.description
+                    buttonIcon.onClick()
+                },
+            ) {
                 Icon(
-                    painter = buttonIcon.outlineIcon,
+                    painter = (
+                            if (selectState.value == buttonIcon.description)
+                                buttonIcon.filledIcon
+                            else buttonIcon.outlineIcon),
                     contentDescription = buttonIcon.description,
                     modifier = Modifier.size(buttonIcon.size),
                     tint = styles.bottomIconColor
