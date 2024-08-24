@@ -165,13 +165,19 @@ class LandingPage {
 
     @Composable
     fun TopAppBarActions() {
+        // Handle light and dark icon colors
+//        val color = if (isSystemInDarkTheme()) Color.White
+//        else Color.Yellow
+
+        // Icon
+        val icon = if (isSystemInDarkTheme()) R.drawable.moon
+        else R.drawable.sun
+
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
                 modifier = Modifier.size(25.dp),
-                painter = painterResource(
-                    id = if (isSystemInDarkTheme())
-                        R.drawable.moon else R.drawable.sun
-                ),
+                painter = painterResource(id = icon),
+//                tint = color,
                 contentDescription = "light mode"
             )
         }
@@ -265,6 +271,9 @@ class LandingPage {
                             id = R.color.closeFloatingButtonContainerColor
                         ),
                         label = "Add",
+                        openIcon = R.drawable.add,
+                        closeIcon = R.drawable.close,
+
                         onClick = {
                             floatActionButtonClickState.value = !floatActionButtonClickState.value
                         }
@@ -298,6 +307,8 @@ class LandingPage {
                 containerOpenColor = colorResource(
                     id = R.color.incomeCloseColor
                 ),
+                openIcon = R.drawable.outline_income,
+                closeIcon = R.drawable.filled_income,
                 containerCloseColor = colorResource(
                     id = R.color.incomeOpenColor
                 ),
@@ -314,6 +325,8 @@ class LandingPage {
                 containerCloseColor = colorResource(
                     id = R.color.expenseOpenColor
                 ),
+                openIcon = R.drawable.outline_expense,
+                closeIcon = R.drawable.filled_expense,
                 label = "Expense",
                 onClick = {
                 }
@@ -327,6 +340,8 @@ class LandingPage {
                 containerCloseColor = colorResource(
                     id = R.color.debtOpenColor
                 ),
+                openIcon = R.drawable.outline_debt,
+                closeIcon = R.drawable.filled_debt,
                 label = "Debt",
                 onClick = {
                 }
@@ -340,6 +355,8 @@ class LandingPage {
                 containerCloseColor = colorResource(
                     id = R.color.lendOpenColor
                 ),
+                openIcon = R.drawable.outline_lend,
+                closeIcon = R.drawable.filled_lend,
                 label = "Lend",
                 onClick = {
                 }

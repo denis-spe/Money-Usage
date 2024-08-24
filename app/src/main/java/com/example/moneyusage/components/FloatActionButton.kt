@@ -9,6 +9,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.moneyusage.dataclasses.FloatActionButtonData
 
@@ -22,8 +23,8 @@ fun FloatActionButton(
     else floatActionButtonData.containerOpenColor
     val contentColor = if (state) floatActionButtonData.contentCloseColor
     else floatActionButtonData.contentOpenColor
-    val icon = if (state) Icons.Filled.Close
-    else Icons.Filled.Add
+    val icon = if (state) painterResource(id = floatActionButtonData.closeIcon)
+    else painterResource(id = floatActionButtonData.openIcon)
 
     FloatingActionButton(
         onClick = {
@@ -40,7 +41,4 @@ fun FloatActionButton(
             contentDescription = floatActionButtonData.label
         )
     }
-
-    // Handle popup for floating action button
-
 }

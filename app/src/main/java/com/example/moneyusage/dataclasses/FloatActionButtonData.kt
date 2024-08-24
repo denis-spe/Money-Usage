@@ -9,8 +9,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 data class FloatActionButtonData(
     val containerOpenColor: Color,
     val containerCloseColor: Color,
-    val openIcon: ImageVector = Icons.Filled.Add,
-    val closeIcon: ImageVector = Icons.Filled.Close,
+    val openIcon: Int,
+    val closeIcon: Int,
     val contentOpenColor: Color = Color.White,
     val contentCloseColor: Color = Color.White,
     val label: String,
