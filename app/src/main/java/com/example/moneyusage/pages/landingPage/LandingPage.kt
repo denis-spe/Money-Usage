@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,6 +56,7 @@ import com.example.moneyusage.components.DialogAlert
 import com.example.moneyusage.components.FloatActionButton
 import com.example.moneyusage.components.TopAppButton
 import com.example.moneyusage.dataclasses.BottomIcon
+import com.example.moneyusage.dataclasses.DialogAmountState
 import com.example.moneyusage.dataclasses.FloatActionButtonData
 import com.example.moneyusage.dataclasses.PieChartData
 import com.example.moneyusage.dataclasses.Styles
@@ -582,10 +584,51 @@ class LandingPage {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
     fun LandPage() {
+        // Lazy list state
         val listState = rememberLazyListState()
+
+        // Main floating action button state
         val mainFloatActionButtonClickState = remember { mutableStateOf(false) }
+
+        // Inner floating action button state
         val innerFloatActionButtonAppearanceState = remember { mutableStateOf("") }
 
+        // Dialog state
+        val dialogAmountState = DialogAmountState(
+            // Income states
+            income = remember {
+                mutableStateOf(TextFieldValue(""))
+            },
+            incomeDesc = remember {
+                mutableStateOf(TextFieldValue(""))
+            },
+
+            // Expense states
+            expense = remember {
+                mutableStateOf(TextFieldValue(""))
+            },
+            expenseDesc = remember {
+                mutableStateOf(TextFieldValue(""))
+            },
+
+            // Debt states
+            debt = remember {
+                mutableStateOf(TextFieldValue(""))
+            },
+            debtDesc = remember {
+                mutableStateOf(TextFieldValue(""))
+            },
+
+            // Lend states
+            lend = remember {
+                mutableStateOf(TextFieldValue(""))
+            },
+            lendDesc = remember {
+                mutableStateOf(TextFieldValue(""))
+            }
+        )
+
+        // Scaffold
         Scaffold(
             modifier = Modifier
                 .fillMaxSize(),
@@ -615,7 +658,10 @@ class LandingPage {
         }
 
         // Handle Dialog for floating action button
-        DialogAlert(state = innerFloatActionButtonAppearanceState)
+        DialogAlert(
+            state = innerFloatActionButtonAppearanceState,
+            dialogAmountState = dialogAmountState
+        )
     }
 }
 

@@ -11,6 +11,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -31,52 +32,80 @@ fun AmountInputField(
 ){
     val fontWeight = FontWeight.Bold
     val fontSize = 23.sp
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        TextField(
-            value = TextFieldValue(
-                text = state.value.text,
-                selection = TextRange(state.value.text.length)
-            ),
-            onValueChange = {
-                val text = it.text
-                // Limit the number of dotes to 1 and the length to 14
-                if (text.count { char -> char == '.' } < 2 && text.length < 16){
-                    if (text.contains(".")){
-                        val number = text.split(".")
-                        val wholeNumber = number[0]
-                        val afterDecimal = number[1]
-                        state.value = TextFieldValue(
-                            "${wholeNumber.toMoneyFormat()}.${afterDecimal.take(2)}"
-                        )
-                    } else {
-                        state.value = TextFieldValue(
-                            text.toMoneyFormat()
-                        )
-                    }
+    
+    TextField(
+        value = TextFieldValue(
+            text = state.value.text,
+            selection = TextRange(state.value.text.length)
+        ),
+        onValueChange = {
+            val text = it.text
+            // Limit the number of dotes to 1 and the length to 14
+            if (text.count { char -> char == '.' } < 2 && text.length < 16){
+                if (text.contains(".")){
+                    val number = text.split(".")
+                    val wholeNumber = number[0]
+                    val afterDecimal = number[1]
+                    state.value = TextFieldValue(
+                        "${wholeNumber.toMoneyFormat()}.${afterDecimal.take(2)}"
+                    )
+                } else {
+                    state.value = TextFieldValue(
+                        text.toMoneyFormat()
+                    )
                 }
-            },
-            textStyle = TextStyle(
+            }
+        },
+        textStyle = TextStyle(
+            fontWeight = fontWeight,
+            fontSize = fontSize),
+        placeholder = {
+            Text(
+                text = "0.00",
                 fontWeight = fontWeight,
-                fontSize = fontSize),
-            placeholder = {
-                Text(
-                    text = "0.00",
-                    fontWeight = fontWeight,
-                    fontSize = fontSize
-                )
-            },
-            prefix = {
-                Text(
-                    text = "R",
-                    fontWeight = FontWeight.Bold,
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-        )
-    }
+                fontSize = fontSize
+            )
+        },
+        prefix = {
+            Text(
+                text = "R",
+                fontWeight = FontWeight.Bold,
+            )
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+    )
+
+}
+
+@Composable
+fun DescriptionInputField(
+    state: MutableState<TextFieldValue>
+){
+    val fontWeight = FontWeight.Bold
+    val fontSize = 20.sp
+
+    TextField(
+        value = TextFieldValue(
+            text = state.value.text,
+            selection = TextRange(state.value.text.length)
+        ),
+        onValueChange = {
+            state.value = it
+        },
+
+        textStyle = TextStyle(
+            fontWeight = fontWeight,
+            fontSize = fontSize),
+
+        placeholder = {
+            Text(
+                text = "description",
+                fontWeight = fontWeight,
+                fontSize = fontSize,
+                color = Color.Gray
+            )
+        },
+    )
 }
 
 
