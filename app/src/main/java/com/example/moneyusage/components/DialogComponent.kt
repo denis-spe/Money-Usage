@@ -40,7 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.moneyusage.R
+import com.example.moneyusage.dataclasses.AmountButtonState
+import com.example.moneyusage.dataclasses.BottomIcon
 import com.example.moneyusage.dataclasses.DialogAmountState
+import kotlinx.coroutines.delay
 import kotlin.concurrent.timer
 
 /**
@@ -56,24 +59,50 @@ fun DialogAlert(
         "Income" -> IncomeDialAlertContent(
             dialogAmountState.income,
             desc = dialogAmountState.incomeDesc,
-            state = state)
-        "Expense" -> ExpenseDialAlertContent(dialogAmountState.expense, state)
-        "Debt" -> DebtDialAlertContent(dialogAmountState.debt, state)
-        "Lend" -> LendDialAlertContent(dialogAmountState.lend, state)
+            state = state
+        )
+        "Expense" -> ExpenseDialAlertContent(
+            dialogAmountState.expense,
+            desc = dialogAmountState.expenseDesc,
+            state = state
+        )
+        "Debt" -> DebtDialAlertContent(
+            dialogAmountState.debt,
+            desc = dialogAmountState.debtDesc,
+            state = state
+        )
+        "Lend" -> LendDialAlertContent(
+            dialogAmountState.lend,
+            desc = dialogAmountState.lendDesc,
+            state = state
+        )
     }
 }
 
 /**
- * Income dialog alert content
+ * Dialog content for floating action button
  * @param state MutableState<String>: The state of the floating action button
+ * @param amountButtonState MutableState<String>: The state of the amount button
+ * @param amountTextField MutableState<TextFieldValue>: The state of the amount text field
+ * @param desc MutableState<TextFieldValue>: The state of the description text field
+ * @param title String: The title of the dialog
+ * @param subTitle String: The subtitle of the dialog
+ * @param icon Int: The icon of the dialog
+ * @param buttonColor Int: The color of the button
+ * @param dataHandling () -> Unit: The function to handle the data
  */
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun IncomeDialAlertContent(
-    income: MutableState<TextFieldValue>,
+fun DialogContent(
+    state: MutableState<String>,
+    amountButtonState: MutableState<AmountButtonState>,
+    amountTextField: MutableState<TextFieldValue>,
     desc: MutableState<TextFieldValue>,
-    state: MutableState<String>) {
-
+    title: String,
+    subTitle: String,
+    icon: Int,
+    buttonColor: Int,
+    dataHandling: () -> Unit
+){
     Dialog(onDismissRequest = {
         state.value = ""
     }) {
@@ -94,20 +123,23 @@ fun IncomeDialAlertContent(
             ) {
 
                 Text(
-                    text = "Income",
+                    text = title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp
                 )
 
                 Text(
-                    text = "Enter the amount of income you have received.",
+                    text = subTitle,
                     textAlign = TextAlign.Center
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // Amount input field
-                AmountInputField(state = income)
+                AmountInputField(
+                    amountButtonState = amountButtonState,
+                    state = amountTextField
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -117,11 +149,44 @@ fun IncomeDialAlertContent(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // Submit button
-                AmountButton(textFieldState = income) {
-                    Thread.sleep(9000)
-                }
+                AmountButton(
+                    amountTextField = amountTextField,
+                    amountButtonState = amountButtonState,
+                    icon = icon,
+                    buttonColor = buttonColor,
+                    waitingListener = dataHandling
+                )
             }
         }
+    }
+}
+
+/**
+ * Income dialog alert content
+ * @param state MutableState<String>: The state of the floating action button
+ */
+@Composable
+fun IncomeDialAlertContent(
+    income: MutableState<TextFieldValue>,
+    desc: MutableState<TextFieldValue>,
+    state: MutableState<String>) {
+
+    // State of the amount button
+    val amountButtonState = remember {
+        mutableStateOf(AmountButtonState.INITIAL)
+    }
+
+    DialogContent(
+        state = state,
+        amountButtonState = amountButtonState,
+        amountTextField = income,
+        desc = desc,
+        title = "Income",
+        subTitle = "Enter the amount of money you have earned.",
+        icon = R.drawable.outline_income,
+        buttonColor = R.color.incomeCloseColor
+    ) {
+        amountButtonState.value = AmountButtonState.FINISHED
     }
 }
 
@@ -130,37 +195,27 @@ fun IncomeDialAlertContent(
  * @param state MutableState<String>: The state of the floating action button
  */
 @Composable
-fun LendDialAlertContent(lend: MutableState<TextFieldValue>, state: MutableState<String>) {
+fun LendDialAlertContent(
+    lend: MutableState<TextFieldValue>,
+    desc: MutableState<TextFieldValue>,
+    state: MutableState<String>
+) {
+    // State of the amount button
+    val amountButtonState = remember {
+        mutableStateOf(AmountButtonState.INITIAL)
+    }
 
-    Dialog(onDismissRequest = {
-        state.value = ""
-    }) {
-        // Draw a rectangle shape with rounded corners inside the dialog
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(375.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Column {
-                Text(
-                    text = "Lend",
-                    fontWeight = FontWeight.Bold,
-                )
-
-                Text(
-                    text = "Enter the amount of money you lent."
-                )
-
-                TextField(
-                    value = lend.value,
-                    onValueChange = {
-                        lend.value = it
-                    })
-
-            }
-        }
+    DialogContent(
+        state = state,
+        amountButtonState = amountButtonState,
+        amountTextField = lend,
+        desc = desc,
+        title = "Lend",
+        subTitle = "Enter the amount of money you want to lend.",
+        icon = R.drawable.outline_lend,
+        buttonColor = R.color.lendCloseColor
+    ) {
+        amountButtonState.value = AmountButtonState.FINISHED
     }
 }
 
@@ -169,75 +224,55 @@ fun LendDialAlertContent(lend: MutableState<TextFieldValue>, state: MutableState
  * @param state MutableState<String>: The state of the floating action button
  */
 @Composable
-fun DebtDialAlertContent(debt: MutableState<TextFieldValue>, state: MutableState<String>) {
+fun DebtDialAlertContent(
+    debt: MutableState<TextFieldValue>,
+    desc: MutableState<TextFieldValue>,
+    state: MutableState<String>) {
 
-    Dialog(onDismissRequest = {
-        state.value = ""
-    }) {
-        // Draw a rectangle shape with rounded corners inside the dialog
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(375.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Column {
-                Text(
-                    text = "debt",
-                    fontWeight = FontWeight.Bold,
-                )
+    // State of the amount button
+    val amountButtonState = remember {
+        mutableStateOf(AmountButtonState.INITIAL)
+    }
 
-                Text(
-                    text = "Enter the amount you are been borrowed."
-                )
-
-                TextField(
-                    value = debt.value,
-                    onValueChange = {
-                        debt.value = it
-                    })
-
-            }
-        }
+    DialogContent(
+        state = state,
+        amountButtonState = amountButtonState,
+        amountTextField = debt,
+        desc = desc,
+        title = "Debt",
+        subTitle = "Enter the amount of money you owe.",
+        icon = R.drawable.outline_debt,
+        buttonColor = R.color.debtCloseColor
+    ) {
+        amountButtonState.value = AmountButtonState.FINISHED
     }
 }
 
 /**
  * Expense dialog alert content
- * @param state MutableState<String>: The state of the floating action button
+ * @param state MutableState<String>: The state of the floating action button.
  */
 @Composable
-fun ExpenseDialAlertContent(expense: MutableState<TextFieldValue>, state: MutableState<String>) {
+fun ExpenseDialAlertContent(
+    expense: MutableState<TextFieldValue>,
+    desc: MutableState<TextFieldValue>,
+    state: MutableState<String>
+) {
+    // State of the amount button
+    val amountButtonState = remember {
+        mutableStateOf(AmountButtonState.INITIAL)
+    }
 
-    Dialog(onDismissRequest = {
-        state.value = ""
-    }) {
-        // Draw a rectangle shape with rounded corners inside the dialog
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(375.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Column {
-                Text(
-                    text = "expense",
-                    fontWeight = FontWeight.Bold,
-                )
-
-                Text(
-                    text = "Enter the amount of money you spent."
-                )
-
-                TextField(
-                    value = expense.value,
-                    onValueChange = {
-                        expense.value = it
-                    })
-
-            }
-        }
+    DialogContent(
+        state = state,
+        amountButtonState = amountButtonState,
+        amountTextField = expense,
+        desc = desc,
+        title = "Expense",
+        subTitle = "Enter the amount of money you have spent.",
+        icon = R.drawable.outline_expense,
+        buttonColor = R.color.expenseCloseColor
+    ) {
+        amountButtonState.value = AmountButtonState.FINISHED
     }
 }

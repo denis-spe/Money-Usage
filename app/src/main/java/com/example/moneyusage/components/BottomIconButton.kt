@@ -19,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import com.example.moneyusage.R
 import com.example.moneyusage.dataclasses.BottomIcon
 import com.example.moneyusage.dataclasses.Styles
 
@@ -27,7 +29,13 @@ fun BottomIconButton(
     buttonIcon: BottomIcon,
     selectState: MutableState<String>,
 ){
-    val styles = Styles()
+    val primaryThemeColor = colorResource(id = R.color.primaryThemeColor)
+    val secondaryThemeColor = colorResource(id = R.color.secondaryThemeColor)
+
+    val buttonStyle = when(selectState.value){
+        buttonIcon.description -> Pair(buttonIcon.filledIcon, primaryThemeColor)
+        else -> Pair(buttonIcon.outlineIcon, secondaryThemeColor)
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -59,13 +67,10 @@ fun BottomIconButton(
                 },
             ) {
                 Icon(
-                    painter = (
-                            if (selectState.value == buttonIcon.description)
-                                buttonIcon.filledIcon
-                            else buttonIcon.outlineIcon),
+                    painter = buttonStyle.first,
                     contentDescription = buttonIcon.description,
                     modifier = Modifier.size(buttonIcon.size),
-                    tint = styles.bottomIconColor
+                    tint = buttonStyle.second
                 )
             }
         }

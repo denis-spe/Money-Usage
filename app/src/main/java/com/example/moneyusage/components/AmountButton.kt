@@ -15,9 +15,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,22 +31,33 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.moneyusage.R
+import com.example.moneyusage.dataclasses.AmountButtonState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.last
 
 @Composable
 fun AmountButton(
-    textFieldState: MutableState<TextFieldValue>,
+    amountTextField: MutableState<TextFieldValue>,
+    amountButtonState: MutableState<AmountButtonState>,
+    icon: Int,
+    buttonColor: Int,
     waitingListener: () -> Unit
 ){
-    val buttonState = remember {
-        mutableStateOf(false)
+
+    LaunchedEffect(key1 = amountButtonState.value) {
+        if (amountButtonState.value == AmountButtonState.LOADING) {
+            delay(2000)
+            waitingListener()
+        }
     }
 
-    val finishedState = remember {
-        mutableStateOf(false)
-    }
-
-    val loadingState = remember {
-        mutableStateOf(false)
+    val button = when (amountButtonState.value) {
+        AmountButtonState.FINISHED -> Pair(R.drawable.finished, buttonColor)
+        AmountButtonState.INITIAL -> Pair(icon, buttonColor)
+        AmountButtonState.ERROR -> Pair(R.drawable.error, R.color.expenseCloseColor)
+        AmountButtonState.LOADING -> Pair(R.drawable.loading, buttonColor)
+        AmountButtonState.INSERTDATA -> Pair(R.drawable.unavaliable, R.color.expenseOpenColor)
     }
 
     Row(
@@ -52,27 +68,9 @@ fun AmountButton(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .width(40.dp)
-                .height(40.dp)
+                .width(50.dp)
+                .height(50.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ){
-                if (loadingState.value) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.width(60.dp),
-                        color = colorResource(id = R.color.incomeOpenColor),
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    )
-                }
-            }
-            
-            if (loadingState.value) {
-                waitingListener()
-                finishedState.value = true
-                loadingState.value = false
-            }
 
 
             Column(
@@ -81,21 +79,39 @@ fun AmountButton(
             ) {
                 FilledIconButton(
                     onClick = {
-                        loadingState.value = !loadingState.value
+                        if (amountButtonState.value == AmountButtonState.INITIAL
+                            && amountTextField.value.text.isNotEmpty()) {
+                            amountButtonState.value = AmountButtonState.LOADING
+                        }
+
+                        if (amountTextField.value.text.isEmpty()) {
+                            amountButtonState.value = AmountButtonState.INSERTDATA
+                        }
                     },
                     colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = colorResource(id = R.color.incomeCloseColor),
+                        containerColor = colorResource(id = button.second),
                         contentColor = Color.White
                     ),
-                    modifier = Modifier.size(35.dp)
+                    modifier = Modifier.size(50.dp)
                 ) {
                     Icon(
                         painter = painterResource(
-                            id = if (finishedState.value)
-                                R.drawable.finished
-                            else R.drawable.deposit
+                            id = button.first
                         ),
                         contentDescription = "Deposit"
+                    )
+                }
+            }
+            
+            if (amountButtonState.value == AmountButtonState.LOADING) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(70.dp),
+                        color = colorResource(id = buttonColor),
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 }
             }

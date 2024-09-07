@@ -84,12 +84,15 @@ class LandingPage {
             mutableStateOf("All")
         }
 
+        val primaryThemeColor: Color = colorResource(id = R.color.primaryThemeColor)
+        val secondaryThemeColor: Color = colorResource(id = R.color.secondaryThemeColor)
+
         // Handle background changes on click
         val selectedButtonBackground: (label: String) -> TopAppButtonColors = {
-            val bgColor = if (selectedButton.value == it) styles.clickedButtonColor
+            val bgColor = if (selectedButton.value == it) primaryThemeColor
             else styles.buttonBackgroundColor
             val textColor = if (selectedButton.value == it) Color.White
-            else topBarTextColor
+            else secondaryThemeColor
             TopAppButtonColors(bgColor, textColor)
         }
 
@@ -267,10 +270,10 @@ class LandingPage {
                 FloatActionButton(
                     floatActionButtonData = FloatActionButtonData(
                         containerOpenColor = colorResource(
-                            id = R.color.openFloatingButtonContainerColor
+                            id = R.color.primaryThemeColor
                         ),
                         containerCloseColor = colorResource(
-                            id = R.color.closeFloatingButtonContainerColor
+                            id = R.color.secondaryThemeColor
                         ),
                         label = "Add",
                         openIcon = R.drawable.add,

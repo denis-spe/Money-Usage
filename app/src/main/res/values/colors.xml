@@ -15,7 +15,7 @@
     <color name="debtOpenColor">#E6D295</color>
     <color name="lendCloseColor">#2196F3</color>
     <color name="lendOpenColor">#7DBEF2</color>
-    <color name="openFloatingButtonContainerColor">#8D9290</color>
-    <color name="closeFloatingButtonContainerColor">#C1C5C5</color>
+    <color name="primaryThemeColor">#8C8C88</color>
+    <color name="secondaryThemeColor">#A5A5A0</color>
     <color name="profileIconTextColor">#FF4261DD</color>
 </resources>

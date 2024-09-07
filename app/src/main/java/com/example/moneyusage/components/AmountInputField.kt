@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -23,11 +25,13 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.moneyusage.dataclasses.AmountButtonState
 import com.example.moneyusage.helper.toMoneyFormat
 
 @SuppressLint("RememberReturnType")
 @Composable
 fun AmountInputField(
+    amountButtonState: MutableState<AmountButtonState>,
     state: MutableState<TextFieldValue>,
 ){
     val fontWeight = FontWeight.Bold
@@ -38,6 +42,7 @@ fun AmountInputField(
             text = state.value.text,
             selection = TextRange(state.value.text.length)
         ),
+        isError = amountButtonState.value == AmountButtonState.ERROR,
         onValueChange = {
             val text = it.text
             // Limit the number of dotes to 1 and the length to 14
@@ -55,6 +60,8 @@ fun AmountInputField(
                     )
                 }
             }
+
+            amountButtonState.value = AmountButtonState.INITIAL
         },
         textStyle = TextStyle(
             fontWeight = fontWeight,
@@ -99,7 +106,7 @@ fun DescriptionInputField(
 
         placeholder = {
             Text(
-                text = "description",
+                text = "description (optional)",
                 fontWeight = fontWeight,
                 fontSize = fontSize,
                 color = Color.Gray
@@ -114,7 +121,11 @@ fun DescriptionInputField(
 @Preview
 @Composable
 fun InputTextComponentPreview(){
-    AmountInputField(state = remember {
+    AmountInputField(
+        amountButtonState = remember {
+            mutableStateOf(AmountButtonState.INITIAL)
+        },
+        state = remember {
         mutableStateOf(TextFieldValue("")) }
     )
 }
