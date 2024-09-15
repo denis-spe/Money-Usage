@@ -84,38 +84,6 @@ fun AmountInputField(
 
 }
 
-@Composable
-fun DescriptionInputField(
-    state: MutableState<TextFieldValue>
-){
-    val fontWeight = FontWeight.Bold
-    val fontSize = 20.sp
-
-    TextField(
-        value = TextFieldValue(
-            text = state.value.text,
-            selection = TextRange(state.value.text.length)
-        ),
-        onValueChange = {
-            state.value = it
-        },
-
-        textStyle = TextStyle(
-            fontWeight = fontWeight,
-            fontSize = fontSize),
-
-        placeholder = {
-            Text(
-                text = "description (optional)",
-                fontWeight = fontWeight,
-                fontSize = fontSize,
-                color = Color.Gray
-            )
-        },
-    )
-}
-
-
 
 
 @Preview

@@ -53,7 +53,8 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -91,4 +92,5 @@ dependencies {
 
     // Chart
     implementation ("co.yml:ycharts:2.1.0")
+    implementation(kotlin("reflect"))
 }
