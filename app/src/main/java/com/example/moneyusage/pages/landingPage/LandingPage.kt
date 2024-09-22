@@ -3,8 +3,11 @@ package com.example.moneyusage.pages.landingPage
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +51,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import co.yml.charts.common.model.Point
 import com.example.moneyusage.R
 import com.example.moneyusage.charts.LineChart
@@ -54,6 +60,7 @@ import com.example.moneyusage.components.BottomIconButton
 import com.example.moneyusage.components.CurrentBalanceCard
 import com.example.moneyusage.components.DialogAlert
 import com.example.moneyusage.components.FloatActionButton
+import com.example.moneyusage.components.RecentTransactions
 import com.example.moneyusage.components.TopAppButton
 import com.example.moneyusage.dataclasses.BottomIcon
 import com.example.moneyusage.dataclasses.DialogAmountState
@@ -369,14 +376,20 @@ class LandingPage {
         )
 
         if (mainFloatActionButtonClickState.value) {
-            Column {
-                floatActionButton.forEach {
-                    FloatActionButton(
-                        floatActionButtonData = it,
-                        appearanceState = innerFloatActionButtonAppearanceState
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        mainFloatActionButtonClickState.value = false
+                    })
                 }
+            ) {
+                    floatActionButton.forEach {
+                        FloatActionButton(
+                            floatActionButtonData = it,
+                            appearanceState = innerFloatActionButtonAppearanceState
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
             }
         }
     }
@@ -575,7 +588,13 @@ class LandingPage {
                     )
                 }
 
+
+
+                // Recent Transactions
+                RecentTransactions()
+
                 Spacer(modifier = Modifier.height(100.dp))
+
 
             }
         }

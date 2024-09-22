@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -115,27 +116,39 @@ fun DialogContent(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Amount input field
-                AmountInputField(
-                    amountButtonState = amountButtonState,
-                    state = amountTextField
-                )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    item {
+                        // Amount input field
+                        AmountInputField(
+                            amountButtonState = amountButtonState,
+                            state = amountTextField
+                        )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
 
-                // Description input field
-                AmountDescriptionInputField(state = desc)
+                    item {
+                        // Description input field
+                        AmountDescriptionInputField(state = desc)
 
-                Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
 
-                // Submit button
-                AmountButton(
-                    amountTextField = amountTextField,
-                    amountButtonState = amountButtonState,
-                    icon = icon,
-                    buttonColor = buttonColor,
-                    waitingListener = dataHandling
-                )
+                    item {
+                        // Submit button
+                        AmountButton(
+                            amountTextField = amountTextField,
+                            amountButtonState = amountButtonState,
+                            icon = icon,
+                            buttonColor = buttonColor,
+                            waitingListener = dataHandling
+                        )
+                    }
+                }
             }
         }
     }
