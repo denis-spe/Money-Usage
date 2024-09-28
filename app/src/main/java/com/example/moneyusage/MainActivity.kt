@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
 
     // Declare the authentication
     private lateinit var authentication: FirebaseAuth
-    private lateinit var currentUser: FirebaseUser
+    private var currentUser: FirebaseUser? = null
 
     // Instantiate firestore
     private var firestore = Firebase.firestore
@@ -37,12 +37,6 @@ class MainActivity : ComponentActivity() {
         // Assign the authentication
         authentication = Firebase.auth
 
-        // Start the app
-        val app = App(
-            auth = authentication,
-            firestore = firestore
-        )
-
         setContent {
             MoneyUsageTheme {
                 // A surface container using the 'background' color from the theme
@@ -50,7 +44,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    app.Start()
+                    // Initialize the app
+                    AppManager(
+                        currentUser = currentUser,
+                        auth = authentication,
+                        firestore = firestore
+                    )
                 }
             }
         }
@@ -59,7 +58,8 @@ class MainActivity : ComponentActivity() {
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-//        currentUser = authentication.currentUser!!
+        currentUser = authentication.currentUser
+
     }
 }
 
@@ -70,6 +70,6 @@ class MainActivity : ComponentActivity() {
 fun MainPreview() {
 
     MoneyUsageTheme {
-        App().Start()
+        AppManager()
     }
 }
