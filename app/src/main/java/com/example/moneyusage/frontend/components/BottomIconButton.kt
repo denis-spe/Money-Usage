@@ -29,12 +29,11 @@ fun BottomIconButton(
     buttonIcon: BottomIcon,
     selectState: MutableState<String>,
 ){
-    val primaryThemeColor = colorResource(id = R.color.primaryThemeColor)
-    val secondaryThemeColor = colorResource(id = R.color.secondaryThemeColor)
+    val interactiveClickColor = colorResource(id = R.color.interactiveClickColor)
 
-    val buttonStyle = when(selectState.value){
-        buttonIcon.description -> Pair(buttonIcon.filledIcon, primaryThemeColor)
-        else -> Pair(buttonIcon.outlineIcon, secondaryThemeColor)
+    val icon = when(selectState.value){
+        buttonIcon.description -> buttonIcon.filledIcon
+        else -> buttonIcon.outlineIcon
     }
 
     Column(
@@ -67,10 +66,10 @@ fun BottomIconButton(
                 },
             ) {
                 Icon(
-                    painter = buttonStyle.first,
+                    painter = icon,
                     contentDescription = buttonIcon.description,
                     modifier = Modifier.size(buttonIcon.size),
-                    tint = buttonStyle.second
+                    tint = interactiveClickColor
                 )
             }
         }

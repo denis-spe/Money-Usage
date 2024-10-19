@@ -9,11 +9,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -37,6 +39,8 @@ fun PasswordAuthTextField(
         verticalArrangement = Arrangement.Center
     ){
 
+        val colorResource = colorResource(id = R.color.authorization_color)
+
         // Outlined Text Field
         OutlinedTextField(
             value = input.value,
@@ -52,6 +56,11 @@ fun PasswordAuthTextField(
             isError = isError,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
+            ),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = colorResource,
+                focusedLabelColor = colorResource,
+                focusedTrailingIconColor = colorResource,
             ),
             trailingIcon = {
                 IconButton(onClick = { /*TODO*/ }) {

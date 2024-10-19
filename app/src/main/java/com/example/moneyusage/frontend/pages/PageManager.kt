@@ -40,7 +40,7 @@ fun PageManager(
             LandingPage(navController)
         }
 
-        // Home page
+        // Home page (logged in)
         composable(NavRoutes.Home.route){
             homePage.HomePage()
         }

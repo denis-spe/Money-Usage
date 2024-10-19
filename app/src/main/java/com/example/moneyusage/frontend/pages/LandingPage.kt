@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -20,8 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,9 +60,7 @@ fun LandingPage(
                     .fillMaxWidth(0.8f)
                     .padding(end = 10.dp)
             ){
-                Text(text = "Get to know how use your money with money usage," +
-                        " the best app for tracking income, expense and how you lend to other" +
-                        " plus you can even get to know the people who you own.")
+                Text(text = stringResource(R.string.intro_description))
             }
         }
         Spacer(modifier = Modifier.height(30.dp))
@@ -68,9 +68,9 @@ fun LandingPage(
         Column {
             Row {
                 Text(
-                    text = "Login or register to get started.",
+                    text = stringResource(R.string.login_register_subtitle),
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Bold
                 )
             }
 
@@ -95,7 +95,8 @@ fun LandingPage(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.g_icon),
-                        contentDescription = "google icon"
+                        contentDescription = stringResource(R.string.google_icon),
+                        modifier = Modifier.size(40.dp)
                     )
                     GoogleText()
                 }
@@ -105,16 +106,12 @@ fun LandingPage(
                 /**
                  * Register and login Row
                  */
-                Row{
-                    AppTitle(15.sp)
-                    Text(text = " account", fontSize = 15.sp)
-                }
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    val registerAndLoginColor = Color(68, 179, 230, 255)
+                    val registerAndLoginColor = colorResource(R.color.authorization_color)
 
                     // Register button
                     Button(
@@ -127,12 +124,6 @@ fun LandingPage(
                             containerColor = registerAndLoginColor,
                         )
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.register_icon),
-                            contentDescription = "register icon",
-                            colorFilter = ColorFilter.tint(Color.White)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
                         Text(text = "Register")
                     }
 
@@ -146,12 +137,6 @@ fun LandingPage(
                         shape = RoundedCornerShape(2.dp),
                         border = BorderStroke(1.dp, registerAndLoginColor)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.login_icon),
-                            contentDescription = "register icon",
-                            colorFilter = ColorFilter.tint(registerAndLoginColor)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Login",
                             color = registerAndLoginColor

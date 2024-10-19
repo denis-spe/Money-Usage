@@ -14,10 +14,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.moneyusage.R
 import com.example.moneyusage.frontend.components.AppTitle
 import com.example.moneyusage.frontend.components.AuthButton
 import com.example.moneyusage.frontend.components.DateTextField
@@ -26,8 +28,10 @@ import com.example.moneyusage.frontend.components.EmailAuthTextField
 import com.example.moneyusage.frontend.components.NameTextField
 import com.example.moneyusage.frontend.components.PasswordAuthTextField
 import com.example.moneyusage.frontend.dataclasses.AuthDataclass
+import com.example.moneyusage.frontend.helper.MonthNames
 import com.example.moneyusage.frontend.helper.NavRoutes
 import com.google.firebase.auth.FirebaseAuth
+import java.util.Date
 
 class RegistrationPage(
     private val navController: NavHostController? = null,
@@ -105,6 +109,22 @@ class RegistrationPage(
 
     @Composable
     fun MoreInformation(){
+        // Get the current year
+        val currentYear = Date().year
+
+        // Create list of month
+        val month = MonthNames.entries.map { it.name }.toList()
+
+        val gender = listOf("Male", "Female")
+
+        val selectedTextState = remember {
+            mutableStateOf(TextFieldValue(""))
+        }
+
+        val dayState = remember {
+            mutableStateOf(TextFieldValue(""))
+        }
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -136,20 +156,12 @@ class RegistrationPage(
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ){
-                val year = listOf(1997, 1998, 1999, 2001)
-                val selectedTextState = remember {
-                    mutableStateOf(TextFieldValue(""))
-                }
-
-                val dayState = remember {
-                    mutableStateOf(TextFieldValue(""))
-                }
 
                 Row {
                     // Month drop down
                     DropDownComponent(
                         label = "Month",
-                        items = year,
+                        items = month,
                         selectedText = selectedTextState,
                         modifier = Modifier.width(160.dp)
                         )
@@ -172,7 +184,7 @@ class RegistrationPage(
 
                 DropDownComponent(
                     label = "Gender",
-                    items = year,
+                    items = gender,
                     selectedText = selectedTextState,
                     modifier = Modifier.width(360.dp)
                 )
@@ -229,7 +241,8 @@ class RegistrationPage(
             ){
                 // Email address or username textField
                 EmailAuthTextField(
-                    label = "Create Money Usage email",
+                    label = stringResource(R.string.email_creation_label),
+                    placeholder = stringResource(R.string.email_creation_placeholder),
                     input = emailState,
                     isAuthButtonClick = false,
                     errorMessage = "Enter an email or username"
@@ -325,7 +338,7 @@ class RegistrationPage(
 @SuppressLint("UnrememberedMutableState")
 @Preview(
     showBackground = true,
-    device = "spec:id=reference_phone,shape=Normal,width=411,height=891,unit=dp,dpi=420",
+    device = "spec:width=411dp,height=891dp,dpi=420",
     showSystemUi = true
 )
 @Composable
@@ -339,7 +352,7 @@ fun RegistrationPageNamesPreview() {
 @SuppressLint("UnrememberedMutableState")
 @Preview(
     showBackground = true,
-    device = "spec:id=reference_phone,shape=Normal,width=411,height=891,unit=dp,dpi=420",
+    device = "spec:width=411dp,height=891dp,dpi=420",
     showSystemUi = true
 )
 @Composable
@@ -352,7 +365,7 @@ fun RegistrationPageMoreInformationPreview() {
 @SuppressLint("UnrememberedMutableState")
 @Preview(
     showBackground = true,
-    device = "spec:id=reference_phone,shape=Normal,width=411,height=891,unit=dp,dpi=420",
+    device = "spec:width=411dp,height=891dp,dpi=420",
     showSystemUi = true
 )
 @Composable
@@ -364,7 +377,7 @@ fun RegistrationPageEmailPreview() {
 @SuppressLint("UnrememberedMutableState")
 @Preview(
     showBackground = true,
-    device = "spec:id=reference_phone,shape=Normal,width=411,height=891,unit=dp,dpi=420",
+    device = "spec:width=411dp,height=891dp,dpi=420",
     showSystemUi = true
 )
 @Composable

@@ -1,5 +1,7 @@
 package com.example.moneyusage
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.moneyusage.frontend.pages.PageManager
@@ -8,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun AppManager(
     currentUser: FirebaseUser? = null,
@@ -21,6 +24,7 @@ fun AppManager(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Preview(showBackground = true)
 @Composable
 fun AppPreview() {

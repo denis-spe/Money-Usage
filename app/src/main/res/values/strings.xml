@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Money Usage</string>
+    <string name="google_icon">google icon</string>
+    <string name="intro_description">
+        Get to know how use your money with money usage
+        the best app for tracking income, expense and how you lend to other
+        plus you can even get to know the people who you own.
+    </string>
+    <string name="login_register_subtitle">Login or register to get started.</string>
+    <string name="loginEmailLabel">Email or username</string>
+    <string name="email_creation_label">Create a new email address</string>
+    <string name="email_creation_placeholder">Email</string>
 </resources>

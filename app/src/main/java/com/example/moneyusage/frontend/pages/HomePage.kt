@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Adjust
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.More
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -92,15 +94,14 @@ class HomePage(
             mutableStateOf("All")
         }
 
-        val primaryThemeColor: Color = colorResource(id = R.color.primaryThemeColor)
-        val secondaryThemeColor: Color = colorResource(id = R.color.secondaryThemeColor)
+        val interactiveClickColor = colorResource(id = R.color.interactiveClickColor)
 
         // Handle background changes on click
         val selectedButtonBackground: (label: String) -> TopAppButtonColors = {
-            val bgColor = if (selectedButton.value == it) primaryThemeColor
-            else styles.buttonBackgroundColor
+            val bgColor = if (selectedButton.value == it) interactiveClickColor
+            else interactiveClickColor.copy(0.3f)
             val textColor = if (selectedButton.value == it) Color.White
-            else secondaryThemeColor
+            else interactiveClickColor
             TopAppButtonColors(bgColor, textColor)
         }
 
@@ -178,8 +179,17 @@ class HomePage(
 
     @Composable
     fun TopAppBarActions() {
-        IconButton(onClick = {}) {
-            Icon(imageVector = Icons.Default.More, contentDescription = "Chart")
+        FilledIconButton(
+            onClick = {},
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = colorResource(R.color.interactiveClickColor)
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Default.BarChart,
+                contentDescription = "Chart",
+                tint = Color.White
+            )
         }
     }
 
@@ -204,6 +214,9 @@ class HomePage(
         floatActionButtonClickState: MutableState<Boolean>,
         lazyState: LazyListState
     ) {
+        
+        // Interactive click color
+        val interactiveClickColor = colorResource(id = R.color.interactiveClickColor)
 
         val state = remember { derivedStateOf { lazyState.firstVisibleItemScrollOffset == 0 } }
         val selectState = remember { mutableStateOf("Home") }
@@ -264,12 +277,8 @@ class HomePage(
 
                 FloatActionButton(
                     floatActionButtonData = FloatActionButtonData(
-                        containerOpenColor = colorResource(
-                            id = R.color.primaryThemeColor
-                        ),
-                        containerCloseColor = colorResource(
-                            id = R.color.secondaryThemeColor
-                        ),
+                        containerOpenColor = interactiveClickColor,
+                        containerCloseColor = interactiveClickColor.copy(0.5f),
                         label = "Add",
                         openIcon = R.drawable.add,
                         closeIcon = R.drawable.close,
@@ -591,7 +600,7 @@ class HomePage(
 
     // --------- LandPage -----------
     @RequiresApi(Build.VERSION_CODES.P)
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NotConstructor")
     @Composable
     fun HomePage() {
         // Lazy list state
@@ -687,7 +696,7 @@ class HomePage(
 @SuppressLint("UnrememberedMutableState")
 @Preview(
     showBackground = true,
-    device = "spec:id=reference_phone,shape=Normal,width=411,height=891,unit=dp,dpi=420",
+    device = "spec:width=411dp,height=891dp,dpi=420",
     showSystemUi = true, name = "LandPagePreview"
 )
 @Composable
