@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.androidx.ui.viewbinding)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -93,6 +94,6 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
 
     // Chart
-    implementation ("co.yml:ycharts:2.1.0")
+    implementation (libs.ycharts)
     implementation(kotlin("reflect"))
 }
