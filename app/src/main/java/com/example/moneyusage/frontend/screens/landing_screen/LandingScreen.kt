@@ -1,4 +1,4 @@
-package com.example.moneyusage.frontend.pages
+package com.example.moneyusage.frontend.screens.landing_screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -29,19 +29,20 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.moneyusage.R
+import com.example.moneyusage.backend.models.services.impl.AccountServiceImpl
 import com.example.moneyusage.frontend.components.AppTitle
 import com.example.moneyusage.frontend.components.GoogleText
-import com.example.moneyusage.frontend.helper.NavRoutes
+
 
 /**
  * This represents a first start view of app
  * when the user has not yet been signed in
  */
 @Composable
-fun LandingPage(
-    navController: NavController? = null
+fun LandingScreen(
+    viewModel: LandingScreenViewModel = LandingScreenViewModel(AccountServiceImpl()),
+    openAndPopUp: (String, String) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -116,7 +117,7 @@ fun LandingPage(
                     // Register button
                     Button(
                         onClick = {
-                            navController?.navigate(NavRoutes.RegisterNames.route)
+                            viewModel.onRegisterClick(openAndPopUp)
                         },
                         modifier = Modifier.width(150.dp),
                         shape = RoundedCornerShape(2.dp),
@@ -128,10 +129,11 @@ fun LandingPage(
                     }
 
                     Spacer(modifier = Modifier.width(10.dp))
+
                     // Login button
                     OutlinedButton(
                         onClick = {
-                            navController?.navigate(NavRoutes.LoginEmail.route)
+                            viewModel.onLoginClick(openAndPopUp)
                         },
                         modifier = Modifier.width(200.dp),
                         shape = RoundedCornerShape(2.dp),
@@ -156,5 +158,7 @@ fun LandingPage(
 )
 @Composable
 fun StartUpPagePreview() {
-    LandingPage()
+    LandingScreen(){
+        _, _ ->
+    }
 }

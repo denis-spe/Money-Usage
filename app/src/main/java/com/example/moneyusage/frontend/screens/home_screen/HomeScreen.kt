@@ -1,4 +1,4 @@
-package com.example.moneyusage.frontend.pages
+package com.example.moneyusage.frontend.screens.home_screen
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -22,15 +22,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Adjust
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.More
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -78,11 +75,106 @@ import com.example.moneyusage.frontend.helper.WeekDays.Thu
 import com.example.moneyusage.frontend.helper.WeekDays.Tue
 import com.example.moneyusage.frontend.helper.WeekDays.Wed
 
-class HomePage(
-    val navController: NavController? = null
+// --------- LandPage -----------
+@RequiresApi(Build.VERSION_CODES.P)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NotConstructor")
+@Composable
+fun HomeScreen(
+    openAndPopUp: (String, String) -> Unit
 ) {
-    private val styles = Styles()
+    // Home screen contents
+    val homeScreenContents = HomeScreenContents()
 
+    // Lazy list state
+    val listState = rememberLazyListState()
+
+    // Main floating action button state
+    val mainFloatActionButtonClickState = remember { mutableStateOf(false) }
+
+    // Inner floating action button state
+    val innerFloatActionButtonAppearanceState = remember { mutableStateOf("") }
+
+    // Dialog state
+    val dialogAmountState = DialogAmountState(
+        // Income states
+        income = remember {
+            mutableStateOf(TextFieldValue(""))
+        },
+        incomeDesc = remember {
+            mutableStateOf(TextFieldValue(""))
+        },
+
+        // Expense states
+        expense = remember {
+            mutableStateOf(TextFieldValue(""))
+        },
+        expenseDesc = remember {
+            mutableStateOf(TextFieldValue(""))
+        },
+
+        // Debt states
+        debt = remember {
+            mutableStateOf(TextFieldValue(""))
+        },
+        debtDesc = remember {
+            mutableStateOf(TextFieldValue(""))
+        },
+
+        // Lend states
+        lend = remember {
+            mutableStateOf(TextFieldValue(""))
+        },
+        lendDesc = remember {
+            mutableStateOf(TextFieldValue(""))
+        }
+    )
+
+    // Scaffold
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit){
+                detectTapGestures {
+                    mainFloatActionButtonClickState.value = false
+                }
+            },
+        topBar = {
+            homeScreenContents.TopBar() },
+        bottomBar = {
+            homeScreenContents.BottomBar(
+                lazyState = listState,
+                floatActionButtonClickState = mainFloatActionButtonClickState
+            )
+        },
+        snackbarHost = { homeScreenContents.SnackBarHost() },
+        containerColor = MaterialTheme.colorScheme.background,
+        floatingActionButton = {
+            // Floating action button
+            homeScreenContents.FloatingAction(
+                innerFloatActionButtonAppearanceState = innerFloatActionButtonAppearanceState,
+                mainFloatActionButtonClickState = mainFloatActionButtonClickState,
+            )
+        },
+        floatingActionButtonPosition = FabPosition.End,
+    ) { innerPadding ->
+
+        // Introduces the contents
+        homeScreenContents.Content(
+            innerPadding = innerPadding,
+            state = listState
+        )
+    }
+
+
+    // Handle Dialog for floating action button
+    DialogAlert(
+        state = innerFloatActionButtonAppearanceState,
+        dialogAmountState = dialogAmountState
+    )
+}
+
+class HomeScreenContents {
+    private val styles = Styles()
 
     @RequiresApi(Build.VERSION_CODES.P)
     @Composable
@@ -596,100 +688,6 @@ class HomePage(
             }
         }
     }
-
-
-    // --------- LandPage -----------
-    @RequiresApi(Build.VERSION_CODES.P)
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NotConstructor")
-    @Composable
-    fun HomePage() {
-        // Lazy list state
-        val listState = rememberLazyListState()
-
-        // Main floating action button state
-        val mainFloatActionButtonClickState = remember { mutableStateOf(false) }
-
-        // Inner floating action button state
-        val innerFloatActionButtonAppearanceState = remember { mutableStateOf("") }
-
-        // Dialog state
-        val dialogAmountState = DialogAmountState(
-            // Income states
-            income = remember {
-                mutableStateOf(TextFieldValue(""))
-            },
-            incomeDesc = remember {
-                mutableStateOf(TextFieldValue(""))
-            },
-
-            // Expense states
-            expense = remember {
-                mutableStateOf(TextFieldValue(""))
-            },
-            expenseDesc = remember {
-                mutableStateOf(TextFieldValue(""))
-            },
-
-            // Debt states
-            debt = remember {
-                mutableStateOf(TextFieldValue(""))
-            },
-            debtDesc = remember {
-                mutableStateOf(TextFieldValue(""))
-            },
-
-            // Lend states
-            lend = remember {
-                mutableStateOf(TextFieldValue(""))
-            },
-            lendDesc = remember {
-                mutableStateOf(TextFieldValue(""))
-            }
-        )
-
-        // Scaffold
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(Unit){
-                    detectTapGestures {
-                        mainFloatActionButtonClickState.value = false
-                    }
-                },
-            topBar = {
-                TopBar() },
-            bottomBar = {
-                BottomBar(
-                    lazyState = listState,
-                    floatActionButtonClickState = mainFloatActionButtonClickState
-                )
-            },
-            snackbarHost = { SnackBarHost() },
-            containerColor = MaterialTheme.colorScheme.background,
-            floatingActionButton = {
-                // Floating action button
-                FloatingAction(
-                    innerFloatActionButtonAppearanceState = innerFloatActionButtonAppearanceState,
-                    mainFloatActionButtonClickState = mainFloatActionButtonClickState,
-                )
-            },
-            floatingActionButtonPosition = FabPosition.End,
-        ) { innerPadding ->
-
-            // Introduces the contents
-            Content(
-                innerPadding = innerPadding,
-                state = listState
-            )
-        }
-
-
-        // Handle Dialog for floating action button
-        DialogAlert(
-            state = innerFloatActionButtonAppearanceState,
-            dialogAmountState = dialogAmountState
-        )
-    }
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -701,5 +699,7 @@ class HomePage(
 )
 @Composable
 fun LandPagePreview() {
-    HomePage().HomePage()
+    HomeScreen(){
+            _, _ ->
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.moneyusage.frontend.pages
+package com.example.moneyusage.frontend.screens.register_screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -18,29 +18,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.moneyusage.R
+import com.example.moneyusage.backend.models.services.impl.AccountServiceImpl
 import com.example.moneyusage.frontend.components.AppTitle
 import com.example.moneyusage.frontend.components.AuthButton
-import com.example.moneyusage.frontend.components.DateTextField
-import com.example.moneyusage.frontend.components.DropDownComponent
 import com.example.moneyusage.frontend.components.EmailAuthTextField
 import com.example.moneyusage.frontend.components.NameTextField
 import com.example.moneyusage.frontend.components.PasswordAuthTextField
 import com.example.moneyusage.frontend.dataclasses.AuthDataclass
-import com.example.moneyusage.frontend.helper.MonthNames
 import com.example.moneyusage.frontend.helper.NavRoutes
 import com.google.firebase.auth.FirebaseAuth
-import java.util.Date
 
-class RegistrationPage(
-    private val navController: NavHostController? = null,
-    private val auth: FirebaseAuth? = null
+class RegisterScreen(
+    private val viewModel: RegisterScreenViewModel = RegisterScreenViewModel(AccountServiceImpl())
 ) {
     private val authDataclass = AuthDataclass()
 
     @Composable
-    fun NamesPage(){
+    fun NamesScreen(
+        openAndPopUp: (String, String) -> Unit
+    ){
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -100,7 +99,7 @@ class RegistrationPage(
                 ){
                     // Next button
                     AuthButton(label = "Next") {
-                        navController?.navigate(NavRoutes.RegisterMoreInfo.route)
+                        viewModel.onNamesNextClick(firstNameState, lastNameState, openAndPopUp)
                     }
                 }
             }
@@ -108,106 +107,7 @@ class RegistrationPage(
     }
 
     @Composable
-    fun MoreInformation(){
-        // Get the current year
-        val currentYear = Date().year
-
-        // Create list of month
-        val month = MonthNames.entries.map { it.name }.toList()
-
-        val gender = listOf("Male", "Female")
-
-        val selectedTextState = remember {
-            mutableStateOf(TextFieldValue(""))
-        }
-
-        val dayState = remember {
-            mutableStateOf(TextFieldValue(""))
-        }
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            // App title
-            AppTitle()
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Description text
-            Text(
-                text = "More Information",
-                fontSize = authDataclass.subTitleFontSize,
-                fontWeight = authDataclass.subTitleFontWeight
-            )
-
-            Text(
-                text = "Enter your year of birth and gender",
-                fontSize = authDataclass.descFontSize,
-                fontWeight = authDataclass.descFontWeight
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Column (
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-
-            ){
-
-                Row {
-                    // Month drop down
-                    DropDownComponent(
-                        label = "Month",
-                        items = month,
-                        selectedText = selectedTextState,
-                        modifier = Modifier.width(160.dp)
-                        )
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    // Day Outline TextField
-                    DateTextField(
-                        label = "Day",
-                        value = dayState,
-                        modifier = Modifier.width(90.dp))
-
-                    Spacer(modifier = Modifier.width(10.dp))
-                    // Year Outline TextField
-                    DateTextField(label = "Year",
-                        value = dayState,
-                        modifier = Modifier.width(90.dp)
-                        )
-                }
-
-                DropDownComponent(
-                    label = "Gender",
-                    items = gender,
-                    selectedText = selectedTextState,
-                    modifier = Modifier.width(360.dp)
-                )
-
-                Spacer(modifier = Modifier.height(50.dp))
-
-                // Register and next row
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .width(368.dp)
-                ){
-                    // Next button
-                    AuthButton(label = "Next") {
-                        navController?.navigate(NavRoutes.RegisterEmail.route)
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun EmailCreationPage(){
+    fun EmailCreationScreen(openAndPopUp: (String, String) -> Unit) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -258,7 +158,7 @@ class RegistrationPage(
                 ){
                     // Next button
                     AuthButton(label = "Next") {
-                        navController?.navigate(NavRoutes.RegisterPassword.route)
+                        viewModel.onEmailNextClick(emailState, openAndPopUp)
                     }
                 }
             }
@@ -266,7 +166,9 @@ class RegistrationPage(
     }
 
     @Composable
-    fun PasswordPage(){
+    fun PasswordScreen(
+        openAndPopUp: (String, String) -> Unit
+    ){
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -327,7 +229,10 @@ class RegistrationPage(
                 ){
                     // Next button
                     AuthButton(label = "Next") {
-                        navController?.navigate(NavRoutes.Home.route)
+                        viewModel.onPasswordNextClick(
+                            passwordState,
+                            confirmPasswordState,
+                            openAndPopUp)
                     }
                 }
             }
@@ -342,11 +247,13 @@ class RegistrationPage(
     showSystemUi = true
 )
 @Composable
-fun RegistrationPageNamesPreview() {
+fun RegistrationScreenNamesPreview() {
 
 
     // Run the sign in page
-    RegistrationPage().NamesPage()
+    RegisterScreen().NamesScreen(){
+        _,_ ->
+    }
 }
 
 @SuppressLint("UnrememberedMutableState")
@@ -356,10 +263,10 @@ fun RegistrationPageNamesPreview() {
     showSystemUi = true
 )
 @Composable
-fun RegistrationPageMoreInformationPreview() {
-
+fun RegistrationScreenEmailPreview() {
     // Run the sign in page
-    RegistrationPage().MoreInformation()
+    RegisterScreen().EmailCreationScreen { _, _ ->
+    }
 }
 
 @SuppressLint("UnrememberedMutableState")
@@ -369,19 +276,9 @@ fun RegistrationPageMoreInformationPreview() {
     showSystemUi = true
 )
 @Composable
-fun RegistrationPageEmailPreview() {
+fun RegistrationScreenPasswordPreview() {
     // Run the sign in page
-    RegistrationPage().EmailCreationPage()
-}
-
-@SuppressLint("UnrememberedMutableState")
-@Preview(
-    showBackground = true,
-    device = "spec:width=411dp,height=891dp,dpi=420",
-    showSystemUi = true
-)
-@Composable
-fun RegistrationPagePasswordPreview() {
-    // Run the sign in page
-    RegistrationPage().PasswordPage()
+    RegisterScreen().PasswordScreen(){
+        _,_ ->
+    }
 }

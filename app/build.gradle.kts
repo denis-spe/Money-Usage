@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.example.moneyusage"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.moneyusage"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -69,6 +69,13 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.firebase.functions.ktx)
+    implementation(libs.google.firebase.firestore)
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.analytics)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,22 +83,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // Import the Firebase BoM
-    implementation(platform(libs.firebase.bom))
-
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-
-    // Adding the dependency for the Firebase SDK for Google Analytics
-    //noinspection UseTomlInstead
-    implementation("com.google.firebase:firebase-analytics")
-
-    // Adding the dependencies for Firebase Authentication and Cloud FireStore
-    //noinspection UseTomlInstead
-    implementation("com.google.firebase:firebase-auth")
-
-    //noinspection UseTomlInstead
-    implementation("com.google.firebase:firebase-firestore")
 
     // Chart
     implementation (libs.ycharts)

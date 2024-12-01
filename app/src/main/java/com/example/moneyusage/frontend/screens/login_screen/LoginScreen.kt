@@ -1,4 +1,4 @@
-package com.example.moneyusage.frontend.pages
+package com.example.moneyusage.frontend.screens.login_screen
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -23,24 +23,22 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.moneyusage.R
+import com.example.moneyusage.backend.models.services.impl.AccountServiceImpl
 import com.example.moneyusage.frontend.components.AppTitle
 import com.example.moneyusage.frontend.components.AuthButton
 import com.example.moneyusage.frontend.components.AuthOutlineButton
 import com.example.moneyusage.frontend.components.AuthTextButton
 import com.example.moneyusage.frontend.components.EmailAuthTextField
 import com.example.moneyusage.frontend.components.PasswordAuthTextField
-import com.example.moneyusage.frontend.helper.NavRoutes
-import com.google.firebase.auth.FirebaseAuth
 
-class LoginPage(
-    private val navController: NavController? = null,
-    private val auth: FirebaseAuth? = null,
+class LoginScreen(
+    private val viewModel: LoginScreenViewModel = LoginScreenViewModel(AccountServiceImpl())
 ) {
 
     @Composable
-    fun EmailOrUsernamePage(
+    fun EmailOrUsernameScreen(
+        openAndPopUp: (String, String) -> Unit
     ){
         val emailInputState = remember {
             mutableStateOf(TextFieldValue(""))
@@ -85,6 +83,7 @@ class LoginPage(
                     AuthTextButton(
                         text = "Forgot email?",
                     ) {
+                        viewModel.onForgotEmailClick(openAndPopUp)
                     }
                     Spacer(modifier = Modifier.width(165.dp))
                 }
@@ -97,13 +96,14 @@ class LoginPage(
                 ){
                     // Register button
                     AuthOutlineButton(label = "Register") {
+                        viewModel.onRegisterClick(openAndPopUp)
                     }
 
                     Spacer(modifier = Modifier.width(95.dp))
 
                     // Next button
                     AuthButton(label = "Next") {
-                        navController?.navigate(NavRoutes.LoginPassword.route)
+                        viewModel.onEmailNextClick(emailInputState, openAndPopUp)
                     }
                 }
             }
@@ -111,7 +111,8 @@ class LoginPage(
     }
 
     @Composable
-    fun PasswordPage(
+    fun PasswordScreen(
+        openAndPopUp: (String, String) -> Unit
     ){
         val username = "denis-spe"
 
@@ -162,13 +163,14 @@ class LoginPage(
                     AuthTextButton(
                         text = "Forgot password?",
                     ) {
+                        viewModel.onForgotPasswordClick(openAndPopUp)
                     }
 
                     Spacer(modifier = Modifier.width(95.dp))
 
                     // Next button
                     AuthButton(label = "Next") {
-                        navController?.navigate(NavRoutes.Home.route)
+                        viewModel.onPasswordNextClick(passwordInputState, openAndPopUp)
                     }
                 }
             }
@@ -190,7 +192,9 @@ class LoginPage(
 @Composable
 fun LoginPageEmailPreview() {
     // Run the sign in page
-    LoginPage().EmailOrUsernamePage()
+    LoginScreen().EmailOrUsernameScreen(){
+        _, _ ->
+    }
 }
 
 @SuppressLint("UnrememberedMutableState")
@@ -202,5 +206,7 @@ fun LoginPageEmailPreview() {
 @Composable
 fun LoginPagePasswordPreview() {
     // Run the sign in page
-    LoginPage().PasswordPage()
+    LoginScreen().PasswordScreen(){
+        _, _ ->
+    }
 }
