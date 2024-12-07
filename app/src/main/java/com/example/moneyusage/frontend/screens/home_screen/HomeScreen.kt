@@ -2,6 +2,7 @@ package com.example.moneyusage.frontend.screens.home_screen
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -36,7 +37,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -53,6 +56,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import co.yml.charts.common.model.Point
 import com.example.moneyusage.R
+import com.example.moneyusage.backend.models.services.impl.AccountServiceImpl
+import com.example.moneyusage.backend.models.services.impl.StorageServiceImpl
 import com.example.moneyusage.frontend.charts.LineChart
 import com.example.moneyusage.frontend.components.BottomIconButton
 import com.example.moneyusage.frontend.components.CurrentBalanceCard
@@ -173,7 +178,13 @@ fun HomeScreen(
     )
 }
 
-class HomeScreenContents {
+class HomeScreenContents(
+    private val viewModel: HomeScreenViewModel = HomeScreenViewModel(
+        AccountServiceImpl(),
+        StorageServiceImpl(AccountServiceImpl())
+    ),
+
+) {
     private val styles = Styles()
 
     @RequiresApi(Build.VERSION_CODES.P)
@@ -243,6 +254,8 @@ class HomeScreenContents {
     @RequiresApi(Build.VERSION_CODES.P)
     @Composable
     fun TopAppBarNavigationIcon() {
+        val dataset by viewModel.database.collectAsState(emptyList())
+
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -256,7 +269,10 @@ class HomeScreenContents {
                         id = R.color.profileIconTextColor
                     )
                 ),
-                onClick = { /*TODO*/ }
+                onClick = {
+//                    viewModel.onProfileClick()
+                    Log.d("Dataset", dataset[0].dataName.toString())
+                }
             ) {
 
                 Text(
