@@ -7,7 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.BackHand
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -18,6 +25,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -29,8 +37,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun AmountButton(
     amountTextField: MutableState<TextFieldValue>,
+    financialType: MutableState<TextFieldValue>,
     amountButtonState: MutableState<AmountButtonState>,
-    icon: Int,
+    icon: ImageVector,
     buttonColor: Int,
     waitingListener: () -> Unit
 ){
@@ -43,11 +52,11 @@ fun AmountButton(
     }
 
     val button = when (amountButtonState.value) {
-        AmountButtonState.FINISHED -> Pair(R.drawable.finished, buttonColor)
+        AmountButtonState.FINISHED -> Pair(Icons.Default.Done, buttonColor)
         AmountButtonState.INITIAL -> Pair(icon, buttonColor)
-        AmountButtonState.ERROR -> Pair(R.drawable.error, R.color.expenseCloseColor)
-        AmountButtonState.LOADING -> Pair(R.drawable.loading, buttonColor)
-        AmountButtonState.INSERTDATA -> Pair(R.drawable.unavaliable, R.color.expenseOpenColor)
+        AmountButtonState.ERROR -> Pair(Icons.Default.Error, R.color.error)
+        AmountButtonState.LOADING -> Pair(Icons.Default.AccessTime, buttonColor)
+        AmountButtonState.INSERTDATA -> Pair(Icons.Default.BackHand, R.color.insertData)
     }
 
     Row(
@@ -70,11 +79,13 @@ fun AmountButton(
                 FilledIconButton(
                     onClick = {
                         if (amountButtonState.value == AmountButtonState.INITIAL
-                            && amountTextField.value.text.isNotEmpty()) {
+                            && amountTextField.value.text.isNotEmpty() &&
+                            financialType.value.text.isNotEmpty()) {
                             amountButtonState.value = AmountButtonState.LOADING
                         }
 
-                        if (amountTextField.value.text.isEmpty()) {
+                        if (amountTextField.value.text.isEmpty() ||
+                            financialType.value.text.isEmpty()) {
                             amountButtonState.value = AmountButtonState.INSERTDATA
                         }
                     },
@@ -85,10 +96,9 @@ fun AmountButton(
                     modifier = Modifier.size(50.dp)
                 ) {
                     Icon(
-                        painter = painterResource(
-                            id = button.first
-                        ),
-                        contentDescription = "Deposit"
+                        imageVector = button.first,
+                        tint = Color.White,
+                        contentDescription = "Description icon"
                     )
                 }
             }

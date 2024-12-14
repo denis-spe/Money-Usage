@@ -8,3 +8,8 @@ const val LOGIN_EMAIL_SCREEN = "LoginEmailScreen"
 const val LOGIN_PASSWORD_SCREEN = "LoginPasswordScreen"
 const val HOME_SCREEN = "HomeScreen"
 const val SPLASH_SCREEN = "SplashScreen"
+
+const val INCOME = "Income"
+const val EXPENSE = "Expense"
+const val LENT = "Lent"
+const val DEBT = "Debt"

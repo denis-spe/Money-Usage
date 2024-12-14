@@ -32,6 +32,12 @@ fun AmountInputField(
             text = state.value.text,
             selection = TextRange(state.value.text.length)
         ),
+        label = {
+            Text(
+                "Amount",
+                fontWeight=FontWeight.Bold
+            )
+        },
         isError = amountButtonState.value == AmountButtonState.ERROR,
         onValueChange = {
             val text = it.text

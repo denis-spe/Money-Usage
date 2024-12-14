@@ -28,7 +28,6 @@ import com.example.moneyusage.frontend.components.EmailAuthTextField
 import com.example.moneyusage.frontend.components.NameTextField
 import com.example.moneyusage.frontend.components.PasswordAuthTextField
 import com.example.moneyusage.frontend.dataclasses.AuthDataclass
-import com.example.moneyusage.frontend.helper.NavRoutes
 import com.google.firebase.auth.FirebaseAuth
 
 class RegisterScreen(

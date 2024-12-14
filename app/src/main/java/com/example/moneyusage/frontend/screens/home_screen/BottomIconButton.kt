@@ -1,4 +1,4 @@
-package com.example.moneyusage.frontend.components
+package com.example.moneyusage.frontend.screens.home_screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseIn
@@ -22,14 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import com.example.moneyusage.R
 import com.example.moneyusage.frontend.dataclasses.BottomIcon
-import com.example.moneyusage.frontend.dataclasses.Styles
 
 @Composable
 fun BottomIconButton(
     buttonIcon: BottomIcon,
     selectState: MutableState<String>,
 ){
-    val interactiveClickColor = colorResource(id = R.color.interactiveClickColor)
+    val interactiveClickColor = colorResource(id = R.color.primaryThemeColor)
 
     val icon = when(selectState.value){
         buttonIcon.description -> buttonIcon.filledIcon

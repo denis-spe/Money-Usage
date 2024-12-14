@@ -110,9 +110,10 @@ fun NavGraphBuilder.appGraph(appState: AppNavState) {
 
     // Home screen
     composable(HOME_SCREEN) {
-        HomeScreen { route, popUp ->
-                appState.navigateAndPopUp(route, popUp)
-        }
+        HomeScreen(
+            openScreen = {route -> appState.navigate(route)},
+            restartApp = {route -> appState.clearAndNavigate(route)}
+        )
     }
 
 }

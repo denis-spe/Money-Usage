@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="interactiveClickColor">#E74C1C</color>
+    <color name="primaryThemeColor">#E74C1C</color>
+    <color name="secondaryThemeColor">#A9E74C1C</color>
     <color name="authorization_color">#2196F3</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
@@ -9,15 +10,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="incomeCloseColor">#4CAF50</color>
-    <color name="incomeOpenColor">#86D58A</color>
-    <color name="expenseCloseColor">#E54338</color>
-    <color name="expenseOpenColor">#E0827B</color>
-    <color name="debtCloseColor">#FFC107</color>
-    <color name="debtOpenColor">#E6D295</color>
-    <color name="lendCloseColor">#2196F3</color>
-    <color name="lendOpenColor">#7DBEF2</color>
-    <color name="primaryThemeColor">#8C8C88</color>
-    <color name="secondaryThemeColor">#A5A5A0</color>
+    <color name="income">#4CAF50</color>
+    <color name="expense">#E54338</color>
+    <color name="debt">#FFC107</color>
+    <color name="lent">#2196F3</color>
     <color name="profileIconTextColor">#FF4261DD</color>
+    <color name="error">#B10303</color>
+    <color name="insertData">#83BD0C06</color>
 </resources>

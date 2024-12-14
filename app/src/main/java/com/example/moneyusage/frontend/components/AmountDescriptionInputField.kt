@@ -143,17 +143,14 @@ fun DescriptionIconsDialog(
 
 @Composable
 fun AmountDescriptionInputField(
-    state: MutableState<TextFieldValue>
+    state: MutableState<TextFieldValue>,
+    selectedIconState: MutableState<ImageVector>
 ){
     val fontWeight = FontWeight.Bold
     val fontSize = 20.sp
 
     val dialogState = remember {
         mutableStateOf(false)
-    }
-
-    val selectedIconState = remember {
-        mutableStateOf(Icons.Default.Description)
     }
 
     val descIcon = Icons.Default.Description
@@ -187,12 +184,18 @@ fun AmountDescriptionInputField(
 
         placeholder = {
             Text(
-                text = "description (optional)",
+                text = "Optional",
                 fontWeight = fontWeight,
                 fontSize = fontSize,
                 color = Color.Gray
             )
         },
+        label = {
+            Text(
+                "Description",
+                fontWeight = FontWeight.Bold
+            )
+        }
     )
 
     if(dialogState.value)

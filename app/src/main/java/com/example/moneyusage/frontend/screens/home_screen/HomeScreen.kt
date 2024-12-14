@@ -2,96 +2,47 @@ package com.example.moneyusage.frontend.screens.home_screen
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import co.yml.charts.common.model.Point
-import com.example.moneyusage.R
+import com.example.moneyusage.DEBT
+import com.example.moneyusage.EXPENSE
+import com.example.moneyusage.INCOME
+import com.example.moneyusage.LENT
 import com.example.moneyusage.backend.models.services.impl.AccountServiceImpl
 import com.example.moneyusage.backend.models.services.impl.StorageServiceImpl
-import com.example.moneyusage.frontend.charts.LineChart
-import com.example.moneyusage.frontend.components.BottomIconButton
-import com.example.moneyusage.frontend.components.CurrentBalanceCard
-import com.example.moneyusage.frontend.components.DialogAlert
-import com.example.moneyusage.frontend.components.FloatActionButton
-import com.example.moneyusage.frontend.components.RecentTransactions
-import com.example.moneyusage.frontend.components.TopAppButton
-import com.example.moneyusage.frontend.dataclasses.BottomIcon
+import com.example.moneyusage.frontend.dataclasses.DialogAlertBtnListener
 import com.example.moneyusage.frontend.dataclasses.DialogAmountState
-import com.example.moneyusage.frontend.dataclasses.FloatActionButtonData
-import com.example.moneyusage.frontend.dataclasses.PieChartData
-import com.example.moneyusage.frontend.dataclasses.Styles
-import com.example.moneyusage.frontend.dataclasses.TopAppButtonArgs
-import com.example.moneyusage.frontend.dataclasses.TopAppButtonColors
-import com.example.moneyusage.frontend.helper.WeekDays.Fri
-import com.example.moneyusage.frontend.helper.WeekDays.Mon
-import com.example.moneyusage.frontend.helper.WeekDays.Sat
-import com.example.moneyusage.frontend.helper.WeekDays.Sun
-import com.example.moneyusage.frontend.helper.WeekDays.Thu
-import com.example.moneyusage.frontend.helper.WeekDays.Tue
-import com.example.moneyusage.frontend.helper.WeekDays.Wed
+import com.example.moneyusage.frontend.helper.changeToDouble
 
 // --------- LandPage -----------
 @RequiresApi(Build.VERSION_CODES.P)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NotConstructor")
 @Composable
 fun HomeScreen(
-    openAndPopUp: (String, String) -> Unit
+    viewModel: HomeScreenViewModel = HomeScreenViewModel(
+        accountService = AccountServiceImpl(),
+        storageService = StorageServiceImpl(AccountServiceImpl())
+    ),
+    restartApp: (String) -> Unit,
+    openScreen: (String) -> Unit
 ) {
-    // Home screen contents
-    val homeScreenContents = HomeScreenContents()
 
     // Lazy list state
     val listState = rememberLazyListState()
+
+    // Open dialog state
+    val onOpenDialogState = remember { mutableStateOf(false) }
 
     // Main floating action button state
     val mainFloatActionButtonClickState = remember { mutableStateOf(false) }
@@ -143,567 +94,33 @@ fun HomeScreen(
                     mainFloatActionButtonClickState.value = false
                 }
             },
-        topBar = {
-            homeScreenContents.TopBar() },
+        topBar = { TopContents() },
         bottomBar = {
-            homeScreenContents.BottomBar(
+            BottomContents(
                 lazyState = listState,
-                floatActionButtonClickState = mainFloatActionButtonClickState
+                onOpenDialogState = onOpenDialogState
             )
         },
-        snackbarHost = { homeScreenContents.SnackBarHost() },
+        snackbarHost = {  },
         containerColor = MaterialTheme.colorScheme.background,
-        floatingActionButton = {
-            // Floating action button
-            homeScreenContents.FloatingAction(
-                innerFloatActionButtonAppearanceState = innerFloatActionButtonAppearanceState,
-                mainFloatActionButtonClickState = mainFloatActionButtonClickState,
-            )
-        },
-        floatingActionButtonPosition = FabPosition.End,
+
     ) { innerPadding ->
 
-        // Introduces the contents
-        homeScreenContents.Content(
+        // Main contents
+        MainContents(
+            viewModel = viewModel,
             innerPadding = innerPadding,
-            state = listState
+            state = listState,
+            restartApp = restartApp
         )
     }
 
 
     // Handle Dialog for floating action button
-    DialogAlert(
-        state = innerFloatActionButtonAppearanceState,
-        dialogAmountState = dialogAmountState
+    DialogAlertContents(
+        onOpenDialogState = onOpenDialogState,
+        viewModel = viewModel
     )
-}
-
-class HomeScreenContents(
-    private val viewModel: HomeScreenViewModel = HomeScreenViewModel(
-        AccountServiceImpl(),
-        StorageServiceImpl(AccountServiceImpl())
-    ),
-
-) {
-    private val styles = Styles()
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    @Composable
-    fun TopAppBarTitle() {
-        val topBarTextColor = if (isSystemInDarkTheme()) styles.darkButtonTextColor
-        else styles.buttonTextColor
-
-        val selectedButton = remember {
-            mutableStateOf("All")
-        }
-
-        val interactiveClickColor = colorResource(id = R.color.interactiveClickColor)
-
-        // Handle background changes on click
-        val selectedButtonBackground: (label: String) -> TopAppButtonColors = {
-            val bgColor = if (selectedButton.value == it) interactiveClickColor
-            else interactiveClickColor.copy(0.3f)
-            val textColor = if (selectedButton.value == it) Color.White
-            else interactiveClickColor
-            TopAppButtonColors(bgColor, textColor)
-        }
-
-        val topAppButtonArgs = listOf(
-            // All arguments
-            TopAppButtonArgs(
-                "All",
-                topBarTextColor = topBarTextColor,
-                selectedButton = selectedButton,
-                onClick = {
-                }
-            ),
-
-            // Today argument
-            TopAppButtonArgs(
-                "Today",
-                topBarTextColor = topBarTextColor,
-                selectedButton = selectedButton,
-                onClick = {
-                }
-            ),
-
-            // Yesterday argument
-            TopAppButtonArgs(
-                "Yesterday",
-                topBarTextColor = topBarTextColor,
-                selectedButton = selectedButton,
-                onClick = {
-                }
-            ),
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-        ) {
-            topAppButtonArgs.forEach {
-                Spacer(modifier = Modifier.width(5.dp))
-                TopAppButton(
-                    topAppButtonArgs = it,
-                    selectedButtonBackground = selectedButtonBackground
-                )
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    @Composable
-    fun TopAppBarNavigationIcon() {
-        val dataset by viewModel.database.collectAsState(emptyList())
-
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(start = 10.dp)
-        ) {
-            FilledIconButton(
-                modifier = Modifier
-                    .size(40.dp),
-                colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = colorResource(
-                        id = R.color.profileIconTextColor
-                    )
-                ),
-                onClick = {
-//                    viewModel.onProfileClick()
-                    Log.d("Dataset", dataset[0].dataName.toString())
-                }
-            ) {
-
-                Text(
-                    text = "D",
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = styles.profileIconTextColor,
-                )
-            }
-        }
-    }
-
-    @Composable
-    fun TopAppBarActions() {
-        FilledIconButton(
-            onClick = {},
-            colors = IconButtonDefaults.filledIconButtonColors(
-                containerColor = colorResource(R.color.interactiveClickColor)
-            )
-        ) {
-            Icon(
-                imageVector = Icons.Default.BarChart,
-                contentDescription = "Chart",
-                tint = Color.White
-            )
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    @Composable
-    @OptIn(ExperimentalMaterial3Api::class)
-    fun TopBar() {
-
-        TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent
-            ),
-            title = { TopAppBarTitle() },
-            navigationIcon = { TopAppBarNavigationIcon() },
-            actions = { TopAppBarActions() }
-        )
-    }
-
-    @SuppressLint("UnrememberedMutableState")
-    @Composable
-    fun BottomBar(
-        floatActionButtonClickState: MutableState<Boolean>,
-        lazyState: LazyListState
-    ) {
-        
-        // Interactive click color
-        val interactiveClickColor = colorResource(id = R.color.interactiveClickColor)
-
-        val state = remember { derivedStateOf { lazyState.firstVisibleItemScrollOffset == 0 } }
-        val selectState = remember { mutableStateOf("Home") }
-        val floatActionButtonAppearanceState = remember { mutableStateOf("") }
-
-        val bottomIcons = listOf(
-            // Bottom Home Icon
-            BottomIcon(
-                outlineIcon = painterResource(id = R.drawable.outline_home),
-                filledIcon = painterResource(id = R.drawable.filled_home),
-                description = "Home",
-                state = state,
-                animateDelayMillis = 500,
-                onClick = { /*TODO*/ }
-            ),
-
-            // Second Bottom Icon
-            BottomIcon(
-                outlineIcon = painterResource(id = R.drawable.outline_search),
-                filledIcon = painterResource(id = R.drawable.filled_search),
-                description = "Search",
-                state = state,
-                animateDelayMillis = 700,
-                onClick = { /*TODO*/ }
-            ),
-
-            // History Bottom Icon
-            BottomIcon(
-                outlineIcon = painterResource(id = R.drawable.outline_history),
-                filledIcon = painterResource(id = R.drawable.filled_history),
-                description = "History",
-                state = state,
-                animateDelayMillis = 1000,
-                onClick = { /*TODO*/ }
-            )
-        )
-
-        BottomAppBar(
-            modifier = Modifier,
-            containerColor = styles.bottomAppBarBackgroundColor,
-            actions = {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(start = 10.dp)
-                ) {
-                    bottomIcons.forEach {
-                        BottomIconButton(
-                            buttonIcon = it,
-                            selectState = selectState
-                        )
-                    }
-                }
-            },
-            floatingActionButton = {
-
-                FloatActionButton(
-                    floatActionButtonData = FloatActionButtonData(
-                        containerOpenColor = interactiveClickColor,
-                        containerCloseColor = interactiveClickColor.copy(0.5f),
-                        label = "Add",
-                        openIcon = R.drawable.add,
-                        closeIcon = R.drawable.close,
-
-                        onClick = {
-                            floatActionButtonClickState.value = !floatActionButtonClickState.value
-                        }
-                    ),
-                    appearanceState = floatActionButtonAppearanceState
-                )
-
-                if (floatActionButtonClickState.value) {
-                    floatActionButtonAppearanceState.value = "Add"
-                } else {
-                    floatActionButtonAppearanceState.value = ""
-                }
-            }
-        )
-    }
-
-    @Composable
-    fun SnackBarHost() {
-
-    }
-
-    @Composable
-    fun FloatingAction(
-        innerFloatActionButtonAppearanceState: MutableState<String>,
-        mainFloatActionButtonClickState: MutableState<Boolean>,
-    ) {
-
-        val floatActionButton = listOf(
-            // Income floating action button dataclass
-            FloatActionButtonData(
-                containerOpenColor = colorResource(
-                    id = R.color.incomeCloseColor
-                ),
-                openIcon = R.drawable.outline_income,
-                closeIcon = R.drawable.filled_income,
-                containerCloseColor = colorResource(
-                    id = R.color.incomeOpenColor
-                ),
-                label = "Income",
-                onClick = {
-                }
-            ),
-
-            // Expense floating action button dataclass
-            FloatActionButtonData(
-                containerOpenColor = colorResource(
-                    id = R.color.expenseCloseColor
-                ),
-                containerCloseColor = colorResource(
-                    id = R.color.expenseOpenColor
-                ),
-                openIcon = R.drawable.outline_expense,
-                closeIcon = R.drawable.filled_expense,
-                label = "Expense",
-                onClick = {
-                }
-            ),
-
-            // Debt floating action button dataclass
-            FloatActionButtonData(
-                containerOpenColor = colorResource(
-                    id = R.color.debtCloseColor
-                ),
-                containerCloseColor = colorResource(
-                    id = R.color.debtOpenColor
-                ),
-                openIcon = R.drawable.outline_debt,
-                closeIcon = R.drawable.filled_debt,
-                label = "Debt",
-                onClick = {
-                }
-            ),
-
-            // Lend floating action button dataclass
-            FloatActionButtonData(
-                containerOpenColor = colorResource(
-                    id = R.color.lendCloseColor
-                ),
-                containerCloseColor = colorResource(
-                    id = R.color.lendOpenColor
-                ),
-                openIcon = R.drawable.outline_lend,
-                closeIcon = R.drawable.filled_lend,
-                label = "Lend",
-                onClick = {
-                }
-            ),
-        )
-
-        if (mainFloatActionButtonClickState.value) {
-            Column(
-                modifier = Modifier.pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        mainFloatActionButtonClickState.value = false
-                    })
-                }
-            ) {
-                    floatActionButton.forEach {
-                        FloatActionButton(
-                            floatActionButtonData = it,
-                            appearanceState = innerFloatActionButtonAppearanceState
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-            }
-        }
-    }
-
-    /**
-     * Profile Detail Drawer
-     */
-    @Composable
-    fun ProfileDetailDrawer() {
-    }
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    @Composable
-    fun Content(
-        innerPadding: PaddingValues,
-        state: LazyListState
-    ) {
-
-        val currentIncomeAndExp = listOf(
-            PieChartData(
-                "Income", 200230.990,
-                color = colorResource(id = R.color.incomeCloseColor)
-            ),
-            PieChartData(
-                "Expense", 19800_0967.9887,
-                color = colorResource(id = R.color.expenseCloseColor)
-            ),
-        )
-
-        val debtAndLend = listOf(
-            PieChartData(
-                "Debt", 989.00,
-                color = colorResource(id = R.color.debtCloseColor)
-            ),
-            PieChartData(
-                "Lend", 3.000000000000988E12,
-                color = colorResource(id = R.color.lendCloseColor)
-            ),
-        )
-
-        // Current balance card size
-        val currentBalanceCardSize = 150.dp
-
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            state = state
-        ) {
-            item {
-                Spacer(modifier = Modifier.size(50.dp))
-            }
-
-            item {
-
-                // Current balance items
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp)
-                ) {
-                    Text(
-                        "Current balance",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight(450)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    item {
-                        Spacer(modifier = Modifier.width(10.dp))
-                        CurrentBalanceCard(
-                            data = currentIncomeAndExp,
-                            size = currentBalanceCardSize
-                        ) {
-
-                        }
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.width(20.dp))
-                    }
-
-                    item {
-                        CurrentBalanceCard(
-                            data = debtAndLend,
-                            size = currentBalanceCardSize
-                        ) {
-
-                        }
-                    }
-                }
-            }
-
-            // Line chart Item
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Sub Title
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp)
-                ) {
-                    Text(
-                        "Timeline chart",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight(450)
-                    )
-                }
-
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    val pointsData: List<Point> =
-                        listOf(
-                            Point(0f, 0f),
-                            Point(1f, 90f),
-                            Point(2f, 80f),
-                            Point(3f, 80f),
-                            Point(4f, 30f),
-                            Point(5f, 23f),
-                            Point(6f, 53f),
-                            Point(7f, 69f),
-                        )
-
-                    val data: List<Point> =
-                        listOf(
-                            Point(0f, 0f),
-                            Point(1f, 32f),
-                            Point(2f, 56f),
-                            Point(3f, 87f),
-                            Point(4f, 25f),
-                            Point(5f, 23f),
-                            Point(6f, 73f),
-                            Point(7f, 49f),
-                        )
-
-                    LineChart(
-                        data = pointsData,
-                        secondData = data,
-                        labelData = {
-                            when (it) {
-                                0 -> ""
-                                3 -> Mon.name
-                                4 -> Tue.name
-                                5 -> Wed.name
-                                else -> ""
-                            }
-                        },
-
-                        mapPopUpLabel = { x, y ->
-                            val xLabel = when (x.toInt()) {
-                                1 -> Mon
-                                2 -> Tue
-                                3 -> Wed
-                                4 -> Thu
-                                5 -> Fri
-                                6 -> Sat
-                                7 -> Sun
-                                else -> ""
-                            }
-                            "$xLabel : $y"
-                        },
-                    )
-                }
-            }
-
-            item {
-                // Sub Title
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp)
-                ) {
-                    Text(
-                        "Recent Transactions",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight(450)
-                    )
-                }
-
-
-
-                // Recent Transactions
-                RecentTransactions()
-
-                Spacer(modifier = Modifier.height(100.dp))
-
-
-            }
-        }
-    }
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -715,7 +132,7 @@ class HomeScreenContents(
 )
 @Composable
 fun LandPagePreview() {
-    HomeScreen(){
-            _, _ ->
+    HomeScreen(restartApp = {}){
+            _ ->
     }
 }

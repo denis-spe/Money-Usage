@@ -1,6 +1,7 @@
 package com.example.moneyusage.frontend.charts
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -51,8 +52,9 @@ fun AnimatedPieChart(
 
     val arcs = data.map {
         currentSum += it.value.toInt()
+        val target = currentSum / total
         ArcData(
-            targetSweepAngle = currentSum / total,
+            targetSweepAngle = target,
             animation = Animatable(0f),
             color = it.color
         )
@@ -62,11 +64,12 @@ fun AnimatedPieChart(
         arcs.map {
             launch {
                 it.animation.animateTo(
-                    targetValue = it.targetSweepAngle,
+                    targetValue = it.targetSweepAngle.takeIf { it.isFinite() } ?: 0.1f,
                     animationSpec = tween(
                         durationMillis = 4000,
                         easing = FastOutSlowInEasing
-                    )
+                    ),
+                    initialVelocity = it.animation.velocity.takeIf { it.isFinite() } ?: 0f
                 )
             }
         }
