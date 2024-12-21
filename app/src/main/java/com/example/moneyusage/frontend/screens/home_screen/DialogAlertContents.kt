@@ -78,7 +78,7 @@ fun DialogAlertContents(
     onOpenDialogState: MutableState<Boolean>,
     viewModel: HomeScreenViewModel
 ) {
-    val date by rememberAutoUpdate()
+    val date = LocalDateTime.now()
 
     val weekDays = WeekDays.entries
     val currentMonth = date.month.name.lowercase()

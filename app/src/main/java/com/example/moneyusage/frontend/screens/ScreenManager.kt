@@ -1,9 +1,18 @@
 package com.example.moneyusage.frontend.screens
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -45,8 +54,10 @@ fun rememberAppState(navController: NavHostController = rememberNavController())
         AppNavState(navController)
     }
 
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
 @RequiresApi(Build.VERSION_CODES.P)
 fun NavGraphBuilder.appGraph(appState: AppNavState) {
+
     // Initialize login screen
     val loginScreen = LoginScreen()
 
@@ -67,7 +78,6 @@ fun NavGraphBuilder.appGraph(appState: AppNavState) {
         LandingScreen { route, popUp ->
                 appState.navigateAndPopUp(route, popUp)
         }
-
     }
 
     // Login email screen
@@ -75,7 +85,6 @@ fun NavGraphBuilder.appGraph(appState: AppNavState) {
         loginScreen.EmailOrUsernameScreen { route, popUp ->
                 appState.navigateAndPopUp(route, popUp)
         }
-
     }
 
     // Login email screen

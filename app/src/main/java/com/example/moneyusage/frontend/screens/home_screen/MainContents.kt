@@ -12,10 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +31,6 @@ import com.example.moneyusage.INCOME
 import com.example.moneyusage.LENT
 import com.example.moneyusage.R
 import com.example.moneyusage.frontend.charts.LineChart
-import com.example.moneyusage.frontend.components.CurrentBalanceCard
 import com.example.moneyusage.frontend.components.RecentTransactions
 import com.example.moneyusage.frontend.dataclasses.PieChartData
 import com.example.moneyusage.frontend.helper.WeekDays.Fri
@@ -75,10 +72,18 @@ fun MainContents(
         if (it.dataName == LENT) it.amount else 0.0
     }
 
+
+    val currentAmount = mapOf(
+        "Income" to totalIncome,
+        "Expense" to totalExpense,
+        "Debt" to totalDebt,
+        "Lent" to totalLent
+    )
+
     /**
      * Lists of pie chart data
      */
-    val currentIncomeAndExp = listOf(
+    val data = listOf(
         PieChartData(
             "Income", totalIncome,
             color = colorResource(id = R.color.income)
@@ -87,8 +92,7 @@ fun MainContents(
             "Expense", totalExpense,
             color = colorResource(id = R.color.expense)
         ),
-    )
-    val debtAndLend = listOf(
+
         PieChartData(
             "Debt", totalDebt,
             color = colorResource(id = R.color.debt)
@@ -100,7 +104,7 @@ fun MainContents(
     )
 
     // Current balance card size
-    val currentBalanceCardSize = 150.dp
+    val size = 250.dp
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -114,132 +118,14 @@ fun MainContents(
             Spacer(modifier = Modifier.size(50.dp))
         }
 
-        item {
+        // Current Amount section
+        currentAmountSection(data = currentAmount)()
 
-            // Current balance items
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp)
-            ) {
-                Text(
-                    "Current balance",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight(450)
-                )
-            }
+        // Pie chart section
+        pieChartSection(data = data)()
 
-            Spacer(modifier = Modifier.height(20.dp))
-
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                item {
-                    Spacer(modifier = Modifier.width(10.dp))
-                    CurrentBalanceCard(
-                        data = currentIncomeAndExp,
-                        size = currentBalanceCardSize
-                    ) {
-
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.width(20.dp))
-                }
-
-                item {
-                    CurrentBalanceCard(
-                        data = debtAndLend,
-                        size = currentBalanceCardSize
-                    ) {
-
-                    }
-                }
-            }
-        }
-
-        // Line chart Item
-        item {
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Sub Title
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp)
-            ) {
-                Text(
-                    "Timeline chart",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight(450)
-                )
-            }
-
-            Column(
-                modifier = Modifier.padding(20.dp)
-            ) {
-                val pointsData: List<Point> =
-                    listOf(
-                        Point(0f, 0f),
-                        Point(1f, 90f),
-                        Point(2f, 80f),
-                        Point(3f, 80f),
-                        Point(4f, 30f),
-                        Point(5f, 23f),
-                        Point(6f, 53f),
-                        Point(7f, 69f),
-                    )
-
-                val data: List<Point> =
-                    listOf(
-                        Point(0f, 0f),
-                        Point(1f, 32f),
-                        Point(2f, 56f),
-                        Point(3f, 87f),
-                        Point(4f, 25f),
-                        Point(5f, 23f),
-                        Point(6f, 73f),
-                        Point(7f, 49f),
-                    )
-
-                LineChart(
-                    data = pointsData,
-                    secondData = data,
-                    labelData = {
-                        when (it) {
-                            0 -> ""
-                            3 -> Mon.name
-                            4 -> Tue.name
-                            5 -> Wed.name
-                            else -> ""
-                        }
-                    },
-
-                    mapPopUpLabel = { x, y ->
-                        val xLabel = when (x.toInt()) {
-                            1 -> Mon
-                            2 -> Tue
-                            3 -> Wed
-                            4 -> Thu
-                            5 -> Fri
-                            6 -> Sat
-                            7 -> Sun
-                            else -> ""
-                        }
-                        "$xLabel : $y"
-                    },
-                )
-            }
-        }
+        // Time Line section
+        timeLineSection()()
 
         item {
             // Sub Title
