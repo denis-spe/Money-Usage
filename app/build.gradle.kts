@@ -85,6 +85,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Chart
-    implementation (libs.ycharts)
-    implementation(kotlin("reflect"))
+    implementation (libs.compose.charts)
 }

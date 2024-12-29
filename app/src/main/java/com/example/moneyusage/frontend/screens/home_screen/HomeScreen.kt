@@ -15,15 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.moneyusage.DEBT
-import com.example.moneyusage.EXPENSE
-import com.example.moneyusage.INCOME
-import com.example.moneyusage.LENT
 import com.example.moneyusage.backend.models.services.impl.AccountServiceImpl
 import com.example.moneyusage.backend.models.services.impl.StorageServiceImpl
-import com.example.moneyusage.frontend.dataclasses.DialogAlertBtnListener
 import com.example.moneyusage.frontend.dataclasses.DialogAmountState
-import com.example.moneyusage.frontend.helper.changeToDouble
 
 // --------- LandPage -----------
 @RequiresApi(Build.VERSION_CODES.P)

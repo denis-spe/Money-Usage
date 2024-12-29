@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+composeCharts = "0.1.0"
 firebaseBom = "32.7.4"
 googleHiltAndroid = "2.44"
 googleHiltCompiler = "2.44"
@@ -44,6 +45,7 @@ hiltCompilerVersion = "2.52"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-navigation-compose-v100 = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+compose-charts = { module = "io.github.ehsannarmani:compose-charts", version.ref = "composeCharts" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }

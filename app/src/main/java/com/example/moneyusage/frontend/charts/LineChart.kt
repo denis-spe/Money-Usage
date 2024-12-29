@@ -1,172 +1,99 @@
 package com.example.moneyusage.frontend.charts
 
-import android.annotation.SuppressLint
+import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import co.yml.charts.axis.AxisData
-import co.yml.charts.common.model.Point
-import co.yml.charts.ui.linechart.LineChart
-import co.yml.charts.ui.linechart.model.GridLines
-import co.yml.charts.ui.linechart.model.IntersectionPoint
-import co.yml.charts.ui.linechart.model.Line
-import co.yml.charts.ui.linechart.model.LineChartData
-import co.yml.charts.ui.linechart.model.LinePlotData
-import co.yml.charts.ui.linechart.model.LineStyle
-import co.yml.charts.ui.linechart.model.LineType
-import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
-import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
-import co.yml.charts.ui.linechart.model.ShadowUnderLine
+import com.example.moneyusage.frontend.dataclasses.LineChartData
+import ir.ehsannarmani.compose_charts.LineChart
+import ir.ehsannarmani.compose_charts.extensions.format
+import ir.ehsannarmani.compose_charts.models.AnimationMode
+import ir.ehsannarmani.compose_charts.models.DotProperties
+import ir.ehsannarmani.compose_charts.models.DrawStyle
+import ir.ehsannarmani.compose_charts.models.GridProperties
+import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
+import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
+import ir.ehsannarmani.compose_charts.models.LabelProperties
+import ir.ehsannarmani.compose_charts.models.Line
+import ir.ehsannarmani.compose_charts.models.PopupProperties
+import ir.ehsannarmani.compose_charts.models.StrokeStyle
 
-@SuppressLint("DefaultLocale")
+
 @Composable
-fun LineChart(
-    modifier: Modifier = Modifier,
-    data: List<Point>,
-    secondData: List<Point> = emptyList(),
-    colors: List<Color> = listOf(Color.Red, Color.Green),
-    steps: Int = 5,
-    labelData: (Int) -> String = { "" },
-    mapPopUpLabel: (Float, Float) -> String = { x, y ->
-        val xLabel = "x : ${x.toInt()} "
-        val yLabel = "y : ${String.format("%.2f", y)}"
-        "$xLabel $yLabel"
-    }
-) {
+fun LineChartComposable(data: List<LineChartData>, labels: List<String>) {
+    val isDark = isSystemInDarkTheme()
+    val labelsColor = if (isDark) Color.White else Color.Black
 
-    val labelColor = if (isSystemInDarkTheme()) Color.White
-    else Color.Gray
-
-    val xAxisData = AxisData.Builder()
-        .axisStepSize(100.dp)
-        .steps(data.size - 1)
-        .axisLabelColor(labelColor)
-        .labelData {
-            labelData(it)
-        }
-        .labelAndAxisLinePadding(15.dp)
-        .axisLineColor(lineColor = Color.LightGray)
-        .build()
-
-    val yAxisData = AxisData.Builder()
-        .steps(steps)
-        .axisLabelColor(labelColor)
-        .labelAndAxisLinePadding(20.dp)
-        .axisLineColor(Color.Unspecified)
-        .labelData { i ->
-            val yScale = 100 / steps
-            (i * yScale).toString()
-        }.build()
-
-    val intervals = floatArrayOf(10f, 5f)
-
-    val radius = 5.dp
-
-    val lineChartData = LineChartData(
-        linePlotData = LinePlotData(
-            lines = listOf(
-                Line(
-                    dataPoints = data,
-                    LineStyle(
-                        lineType = LineType.SmoothCurve(
-                            isDotted = false,
-                            intervals = intervals
-                        ),
-                        width = 5f,
-                        color = colors[0]
-                    ),
-                    IntersectionPoint(radius = 0.dp),
-                    SelectionHighlightPoint(
-                        color = colors[0],
-                        radius = radius
-                    ),
-                    ShadowUnderLine(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                colors[0].copy(alpha = 0.556f),
-                                colors[0].copy(alpha = 0.256f)
-                            ),
-                            start = Offset.Zero,
-                            end = Offset.Infinite
-                        )
-                    ),
-                    SelectionHighlightPopUp(
-                        backgroundColor = Color.LightGray,
-                        backgroundAlpha = 0.4f,
-                        labelSize = 18.sp,
-                        popUpLabel = { x, y ->
-                            if (x.toInt() == 0 && y.toInt() == 0)
-                                "";
-                            else
-                                mapPopUpLabel(x, y);
-                        },
-                    )
-                ),
-
-                Line(
-                    dataPoints = secondData,
-                    LineStyle(
-                        lineType = LineType.SmoothCurve(
-                            isDotted = false,
-                            intervals = intervals
-                            ),
-                        width = 5f,
-                        color = colors[1]
-                    ),
-                    IntersectionPoint(radius = 0.dp),
-                    SelectionHighlightPoint(
-                        color = colors[1],
-                        radius = radius
-                    ),
-                    ShadowUnderLine(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                colors[1].copy(alpha = 0.556f),
-                                colors[1].copy(alpha = 0.256f)
-                            ),
-                            start = Offset.Zero,
-                            end = Offset.Infinite
-                        )
-                    ),
-                    SelectionHighlightPopUp(
-                        backgroundColor = Color.LightGray,
-                        backgroundAlpha = 0.4f,
-                        labelSize = 18.sp,
-                        popUpLabel = { x, y ->
-                            if (x.toInt() == 0 && y.toInt() == 0)
-                                "";
-                            else
-                                mapPopUpLabel(x, y);
-                        },
-                    )
-                )
+    val dataset = data.map {
+        Line(
+            label = it.name,
+            values = it.values,
+            color = SolidColor(it.color),
+            firstGradientFillColor = it.color.copy(alpha = .5f),
+            secondGradientFillColor = Color.Transparent,
+            strokeAnimationSpec = tween(2000, easing = EaseInOutCubic),
+            gradientAnimationDelay = 3000,
+            drawStyle = DrawStyle.Stroke(width = 2.dp),
+            dotProperties = DotProperties(
+                enabled = true,
+                color = SolidColor(it.color)
             ),
-        ),
-        xAxisData = xAxisData,
-        yAxisData = yAxisData,
-        gridLines = GridLines(
-            enableVerticalLines = false,
-            lineWidth = 0.5.dp,
-            alpha = 0.8f
-        ),
-        backgroundColor = Color.Transparent,
-        paddingTop = 40.dp,
-    )
+            curvedEdges = true,
+            popupProperties = PopupProperties(
+                containerColor = it.color.copy(alpha = .5f),
+                mode = PopupProperties.Mode.PointMode(),
+                textStyle = TextStyle.Default. copy(
+                    color = labelsColor,
+                ),
+            ){ value ->
+                "R${value.format(2)}"
+            }
+        )
+    }
 
     LineChart(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(300.dp),
-        lineChartData = lineChartData
+        modifier = Modifier.fillMaxWidth().height(300.dp),
+        data = remember { dataset },
+        labelProperties = LabelProperties(
+            enabled = true,
+            labels = labels,
+            textStyle = TextStyle.Default. copy(
+                color = labelsColor,
+            )
+        ),
+        indicatorProperties = HorizontalIndicatorProperties(
+            textStyle = TextStyle.Default. copy(
+                color = labelsColor,
+            )
+        ),
+        labelHelperProperties = LabelHelperProperties(
+            enabled = true,
+            textStyle = TextStyle.Default. copy(
+                color = labelsColor,
+            )
+        ),
+        gridProperties = GridProperties(
+            enabled = true,
+            xAxisProperties = GridProperties.AxisProperties(
+                color = SolidColor(Color.LightGray),
+                thickness = (.3).dp,
+                style = StrokeStyle.Dashed()
+            ),
+            yAxisProperties = GridProperties.AxisProperties(
+                enabled = false,
+            )
+        ),
+        animationMode = AnimationMode.Together(delayBuilder = {
+            it * 500L
+        }),
     )
 }
 

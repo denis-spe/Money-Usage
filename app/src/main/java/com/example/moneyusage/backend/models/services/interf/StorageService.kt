@@ -2,12 +2,18 @@ package com.example.moneyusage.backend.models.services.interf
 
 import com.example.moneyusage.backend.models.Data
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface StorageService {
     /**
      * Return the list of data for the current user.
      */
     val dataset: Flow<List<Data>>
+
+    /**
+     * Return the loading state of the database.
+     */
+    val isLoading: StateFlow<Boolean>
 
     /**
      * Add a new data to the database

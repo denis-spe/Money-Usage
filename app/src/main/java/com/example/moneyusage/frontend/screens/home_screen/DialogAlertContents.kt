@@ -32,6 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -50,11 +52,13 @@ import com.example.moneyusage.frontend.components.AmountInputField
 import com.example.moneyusage.frontend.components.DateTimePicker
 import com.example.moneyusage.frontend.components.DropDownComponent
 import com.example.moneyusage.frontend.dataclasses.AmountButtonState
+import com.example.moneyusage.frontend.dataclasses.DateTime
 import com.example.moneyusage.frontend.dataclasses.DialogAlertBtnListener
 import com.example.moneyusage.frontend.helper.MonthNames
 import com.example.moneyusage.frontend.helper.WeekDays
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
+import java.util.Date
 
 @Composable
 fun rememberAutoUpdate(): State<LocalDateTime> {
@@ -101,6 +105,16 @@ fun DialogAlertContents(
     val minute = remember {
         mutableStateOf(TextFieldValue("${date.minute}"))
     }
+
+    // Initialize the date time object
+    val dateTime = DateTime(
+        year = year.value.text.toInt(),
+        month = month.value.text,
+        day = dayOfTheMonth.value.text.trim().toInt(),
+        hour = hour.value.text.toInt(),
+        minute = minute.value.text.toInt(),
+        dayOfTheWeek = dayOfTheWeek.value.text
+    )
 
     val amountButtonState = remember { mutableStateOf(AmountButtonState.INITIAL) }
     val amountTextField = remember { mutableStateOf(TextFieldValue("")) }
@@ -237,8 +251,16 @@ fun DialogAlertContents(
                                     selectedIconState.value else Icons.Default.Add,
                                 buttonColor = buttonColor.intValue,
                             ) {
+                                viewModel.onDateSaveClick(
+                                    dataName = selectedTextState.value.text,
+                                    amount = amountTextField.value.text.toDouble(),
+                                    description = descTextState.value.text,
+                                    date = dateTime,
+                                    icon = selectedIconState.value
+                                )
                                 amountButtonState.value = AmountButtonState.FINISHED
                             }
+
                         }
                     }
                 }
