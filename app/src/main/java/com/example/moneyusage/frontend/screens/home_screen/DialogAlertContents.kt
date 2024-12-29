@@ -12,35 +12,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Money
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.Lifecycle
 import com.example.moneyusage.DEBT
 import com.example.moneyusage.EXPENSE
 import com.example.moneyusage.INCOME
@@ -53,12 +41,9 @@ import com.example.moneyusage.frontend.components.DateTimePicker
 import com.example.moneyusage.frontend.components.DropDownComponent
 import com.example.moneyusage.frontend.dataclasses.AmountButtonState
 import com.example.moneyusage.frontend.dataclasses.DateTime
-import com.example.moneyusage.frontend.dataclasses.DialogAlertBtnListener
-import com.example.moneyusage.frontend.helper.MonthNames
 import com.example.moneyusage.frontend.helper.WeekDays
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
-import java.util.Date
 
 @Composable
 fun rememberAutoUpdate(): State<LocalDateTime> {

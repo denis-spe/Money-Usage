@@ -1,6 +1,5 @@
 package com.example.moneyusage.backend.models
 
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.moneyusage.frontend.dataclasses.DateTime
 import com.google.firebase.firestore.DocumentId
 

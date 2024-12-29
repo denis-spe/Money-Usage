@@ -1,7 +1,5 @@
 package com.example.moneyusage.frontend.dataclasses
 
-import java.time.Year
-
 data class DateTime (
     val year: Int? = null,
     val month: String? = null,
