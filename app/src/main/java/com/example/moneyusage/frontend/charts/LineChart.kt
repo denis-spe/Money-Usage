@@ -6,6 +6,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,13 +34,14 @@ fun LineChartComposable(data: List<LineChartData>, labels: List<String>) {
     val isDark = isSystemInDarkTheme()
     val labelsColor = if (isDark) Color.White else Color.Black
 
+
     val dataset = data.map {
         Line(
             label = it.name,
             values = it.values,
-            color = SolidColor(it.color),
+            color = SolidColor(it.color!!),
             firstGradientFillColor = it.color.copy(alpha = .5f),
-            secondGradientFillColor = Color.Transparent,
+            secondGradientFillColor = if (it.name.isNotEmpty()) Color.Transparent else Color.Unspecified,
             strokeAnimationSpec = tween(2000, easing = EaseInOutCubic),
             gradientAnimationDelay = 3000,
             drawStyle = DrawStyle.Stroke(width = 2.dp),
@@ -50,33 +53,35 @@ fun LineChartComposable(data: List<LineChartData>, labels: List<String>) {
             popupProperties = PopupProperties(
                 containerColor = it.color.copy(alpha = .5f),
                 mode = PopupProperties.Mode.PointMode(),
-                textStyle = TextStyle.Default. copy(
+                textStyle = TextStyle.Default.copy(
                     color = labelsColor,
                 ),
-            ){ value ->
+            ) { value ->
                 "R${value.format(2)}"
             }
         )
     }
 
     LineChart(
-        modifier = Modifier.fillMaxWidth().height(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
         data = remember { dataset },
         labelProperties = LabelProperties(
             enabled = true,
             labels = labels,
-            textStyle = TextStyle.Default. copy(
+            textStyle = TextStyle.Default.copy(
                 color = labelsColor,
             )
         ),
         indicatorProperties = HorizontalIndicatorProperties(
-            textStyle = TextStyle.Default. copy(
+            textStyle = TextStyle.Default.copy(
                 color = labelsColor,
             )
         ),
         labelHelperProperties = LabelHelperProperties(
             enabled = true,
-            textStyle = TextStyle.Default. copy(
+            textStyle = TextStyle.Default.copy(
                 color = labelsColor,
             )
         ),

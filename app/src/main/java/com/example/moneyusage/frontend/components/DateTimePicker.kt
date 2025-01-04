@@ -78,7 +78,13 @@ fun DateTimePicker(
             $dayOfWeek, $dayOfMonth ${month.value.text} ${year.value.text}
             """.trimIndent()
                     )
-                    Text("Time: ${hour.value.text}:${minute.value.text}")
+
+                    val addZoneOnHour = if (hour.value.text.length == 1)
+                        "0${hour.value.text}" else hour.value.text
+                    val addZoneOnMinute = if (minute.value.text.length == 1)
+                        "0${minute.value.text}" else minute.value.text
+
+                    Text("Time: ${addZoneOnHour}:${addZoneOnMinute}")
                 }
             }
 
@@ -173,15 +179,25 @@ fun DateTimeComponent(
                 )
             }
 
-            Row {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                val hours = (0..24).toList().map {
+                    if (it < 10) "0$it" else "$it"
+                }
+
                 DropDownComponent(
-                    items = (0..24).toList(),
+                    items = hours,
                     selectedText = hour,
                     modifier = Modifier.width(60.dp),
                     showTailingBtn = false,
                     textAlign = TextAlign.Center,
                     alignContentTextToContent = true
                 )
+                Text(":")
                 DropDownComponent(
                     items = (0..60).toList(),
                     selectedText = minute,

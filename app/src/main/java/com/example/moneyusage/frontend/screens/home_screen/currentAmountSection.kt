@@ -85,7 +85,10 @@ fun CurrentAmountSection(dataset: State<List<Data>>) {
             ) {
                 val amount = data.values.toList()[index].toString()
                 val wholeNum = amount.split(".")[0].toMoneyFormat()
-                val decimalNum = amount.split(".")[1]
+                var decimalNum = amount.split(".")[1]
+                decimalNum = if (decimalNum.length > 2) decimalNum.substring(0, 2)
+                else decimalNum
+
 
                 Text(
                     "R${wholeNum}." + decimalNum,

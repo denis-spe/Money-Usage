@@ -1,5 +1,6 @@
 package com.example.moneyusage.frontend.screens.home_screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -68,15 +69,25 @@ fun DialogAlertContents(
     viewModel: HomeScreenViewModel
 ) {
     val date = LocalDateTime.now()
+    val weekDayIdx = when(date.dayOfWeek.name){
+        "SUNDAY" -> 0
+        "MONDAY" -> 1
+        "TUESDAY" -> 2
+        "WEDNESDAY" -> 3
+        "THURSDAY" -> 4
+        "FRIDAY" -> 5
+        "SATURDAY" -> 6
+        else -> 0
+    }
 
     val weekDays = WeekDays.entries
     val currentMonth = date.month.name.lowercase()
-
     val dayOfTheWeek = remember {
-        mutableStateOf(TextFieldValue("${weekDays[date.dayOfWeek.value - 1]}"))
+        mutableStateOf(TextFieldValue("${weekDays[weekDayIdx]}"))
     }
+    val mapDayOfMonth = if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else date.dayOfMonth
     val dayOfTheMonth = remember {
-        mutableStateOf(TextFieldValue(" ${date.dayOfMonth}"))
+        mutableStateOf(TextFieldValue("$mapDayOfMonth"))
     }
     val month = remember {
         mutableStateOf(TextFieldValue(currentMonth.replaceFirstChar { it.uppercase() }))
@@ -84,11 +95,27 @@ fun DialogAlertContents(
     val year = remember {
         mutableStateOf(TextFieldValue("${date.year}"))
     }
+    val mapHour = "${if (date.hour < 10) "0${date.hour}" else date.hour}"
+    val mapMinute = "${if (date.minute < 10) "0${date.minute}" else date.minute}"
+
     val hour = remember {
-        mutableStateOf(TextFieldValue("${date.hour}"))
+        mutableStateOf(
+            TextFieldValue(mapHour)
+        )
     }
     val minute = remember {
-        mutableStateOf(TextFieldValue("${date.minute}"))
+        mutableStateOf(
+            TextFieldValue(mapMinute)
+        )
+    }
+
+    LaunchedEffect(key1 = date){
+        hour.value = TextFieldValue(mapHour)
+        minute.value = TextFieldValue(mapMinute)
+        dayOfTheWeek.value = TextFieldValue("${weekDays[weekDayIdx]}")
+        dayOfTheMonth.value = TextFieldValue("$mapDayOfMonth")
+        month.value = TextFieldValue(currentMonth.replaceFirstChar { it.uppercase() })
+        year.value = TextFieldValue("${date.year}")
     }
 
     // Initialize the date time object
