@@ -60,13 +60,14 @@ fun TimeLineSection(dataset: State<List<Data>>) {
         )
     }
 
-    data.value = dataset.mappingData().map {
-        LineChartData(
-            name = it.key,
-            values = it.value,
-            color = null
-        )
-    }.toList()
+    if (dataset.value.isNotEmpty())
+        data.value = dataset.mappingData().map {
+            LineChartData(
+                name = it.key,
+                values = it.value,
+                color = null
+            )
+        }.toList()
 
 
     val labels = WeekDays.entries.map { it.name }.toMutableList()

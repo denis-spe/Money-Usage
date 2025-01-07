@@ -39,7 +39,7 @@ fun AmountButton(
     amountTextField: MutableState<TextFieldValue>,
     financialType: MutableState<TextFieldValue>,
     amountButtonState: MutableState<AmountButtonState>,
-    icon: ImageVector,
+    icon: Int,
     buttonColor: Int,
     waitingListener: () -> Unit
 ){
@@ -52,11 +52,11 @@ fun AmountButton(
     }
 
     val button = when (amountButtonState.value) {
-        AmountButtonState.FINISHED -> Pair(Icons.Default.Done, buttonColor)
+        AmountButtonState.FINISHED -> Pair(R.drawable.done, buttonColor)
         AmountButtonState.INITIAL -> Pair(icon, buttonColor)
-        AmountButtonState.ERROR -> Pair(Icons.Default.Error, R.color.error)
-        AmountButtonState.LOADING -> Pair(Icons.Default.AccessTime, buttonColor)
-        AmountButtonState.INSERTDATA -> Pair(Icons.Default.BackHand, R.color.insertData)
+        AmountButtonState.ERROR -> Pair(R.drawable.error, R.color.error)
+        AmountButtonState.LOADING -> Pair(R.drawable.time, buttonColor)
+        AmountButtonState.INSERTDATA -> Pair(R.drawable.insert, R.color.insertData)
     }
 
     Row(
@@ -96,7 +96,7 @@ fun AmountButton(
                     modifier = Modifier.size(50.dp)
                 ) {
                     Icon(
-                        imageVector = button.first,
+                        painter = painterResource(button.first),
                         tint = Color.White,
                         contentDescription = "Description icon"
                     )

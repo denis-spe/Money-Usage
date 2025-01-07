@@ -10,5 +10,5 @@ data class Data(
     val amount: Double = 0.0,
     val description: String = "",
     val date: DateTime? = null,
-    val icon: Any? = null
+    val icon: Int? = null
 )

@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.moneyusage.frontend.components.RecentTransactions
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -98,7 +97,7 @@ fun MainContents(
 
 
                 // Recent Transactions
-                RecentTransactions()
+                RecentTransactions(dataset = dataset)
 
                 Spacer(modifier = Modifier.height(100.dp))
 

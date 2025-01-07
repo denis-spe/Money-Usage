@@ -22,7 +22,7 @@ class HomeScreenViewModel@Inject constructor(
         amount: Double,
         description: String,
         date: DateTime,
-        icon: Any
+        icon: Int
     ) {
         launchCatching {
             storageService.addData(Data(

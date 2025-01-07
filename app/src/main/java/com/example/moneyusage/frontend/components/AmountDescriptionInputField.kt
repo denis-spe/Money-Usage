@@ -1,5 +1,6 @@
 package com.example.moneyusage.frontend.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,12 +34,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.moneyusage.R
 
 
 @Composable
 fun DescriptionIconsDialog(
     state: MutableState<Boolean>,
-    selectedIcon: MutableState<ImageVector>
+    selectedIcon: MutableState<Int>
 ){
     val searchState = remember {
         mutableStateOf(TextFieldValue())
@@ -112,6 +115,7 @@ fun DescriptionIconsDialog(
 
                         val name = filteredList.value.keys.elementAt(it)
                         val icon = filteredList.value.values.elementAt(it)
+
                         Column(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -121,8 +125,8 @@ fun DescriptionIconsDialog(
                                     selectedIcon.value = icon
                                     state.value = false
                                 }){
-                                Icon(
-                                    imageVector = icon,
+                                Image(
+                                    painter = painterResource(icon),
                                     contentDescription = name
                                 )
                             }
@@ -144,7 +148,7 @@ fun DescriptionIconsDialog(
 @Composable
 fun AmountDescriptionInputField(
     state: MutableState<TextFieldValue>,
-    selectedIconState: MutableState<ImageVector>
+    selectedIconState: MutableState<Int>
 ){
     val fontWeight = FontWeight.Bold
     val fontSize = 20.sp
@@ -153,7 +157,7 @@ fun AmountDescriptionInputField(
         mutableStateOf(false)
     }
 
-    val descIcon = Icons.Default.Description
+    val descIcon = R.drawable.description
 
     // Handle icon change
     val selectedIcon = if(selectedIconState.value != descIcon)
@@ -174,7 +178,7 @@ fun AmountDescriptionInputField(
                     dialogState.value = true
                 }
             ) {
-                Icon(imageVector =selectedIcon,
+                Image(painter = painterResource(selectedIcon),
                     contentDescription = "description")
             }
         },

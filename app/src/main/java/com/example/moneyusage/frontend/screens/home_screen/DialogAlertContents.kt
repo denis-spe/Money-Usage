@@ -132,7 +132,7 @@ fun DialogAlertContents(
     val amountTextField = remember { mutableStateOf(TextFieldValue("")) }
     val descTextState = remember { mutableStateOf(TextFieldValue("")) }
     val selectedTextState = remember { mutableStateOf(TextFieldValue("")) }
-    val selectedIconState = remember { mutableStateOf(Icons.Default.Description) }
+    val selectedIconState = remember { mutableStateOf(R.drawable.description) }
 
     val buttonColor = remember { mutableIntStateOf(R.color.profileIconTextColor) }
     when (selectedTextState.value.text) {
@@ -259,8 +259,8 @@ fun DialogAlertContents(
                                 amountTextField = amountTextField,
                                 financialType = selectedTextState,
                                 amountButtonState = amountButtonState,
-                                icon = if (selectedIconState.value != Icons.Default.Description)
-                                    selectedIconState.value else Icons.Default.Add,
+                                icon = if (selectedIconState.value != R.drawable.description)
+                                    selectedIconState.value else R.drawable.add,
                                 buttonColor = buttonColor.intValue,
                             ) {
                                 viewModel.onDateSaveClick(
