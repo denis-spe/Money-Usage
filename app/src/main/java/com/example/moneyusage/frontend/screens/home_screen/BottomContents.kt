@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
@@ -15,14 +14,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.moneyusage.R
 import com.example.moneyusage.frontend.dataclasses.BottomIcon
 import com.example.moneyusage.frontend.dataclasses.Styles
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun BottomContents(
@@ -31,9 +28,6 @@ fun BottomContents(
 ) {
 
     val styles = Styles()
-
-    // Interactive click color
-    val interactiveClickColor = colorResource(id = R.color.primaryThemeColor)
 
     val state = remember { derivedStateOf { lazyState.firstVisibleItemScrollOffset == 0 } }
     val selectState = remember { mutableStateOf("Home") }
