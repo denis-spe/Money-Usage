@@ -3,14 +3,11 @@ package com.example.moneyusage.frontend.screens.home_screen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,50 +28,35 @@ fun MainContents(
 
     // Collect dataset as state
     val dataset = viewModel.database.collectAsState(initial = emptyList())
-    val isLoading = viewModel.isLoading.collectAsState()
     viewModel.fetchData()
 
-    if (isLoading.value) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.onBackground
-            )
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding),
+        state = state
+    ) {
+
+        // Current Amount section
+        item {
+            CurrentAmountSection(dataset = dataset)
         }
-    }
 
-    if (!isLoading.value) {
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            state = state
-        ) {
+        // Pie chart section
+        item {
+            PieChartSection(dataset = dataset)
+        }
 
-            // Current Amount section
-            item {
-                CurrentAmountSection(dataset = dataset)
-            }
+        // Time Line section
+        item {
+            TimeLineSection(dataset = dataset)
+        }
 
-            // Pie chart section
-            item {
-                PieChartSection(dataset = dataset)
-            }
-
-            // Time Line section
-            item {
-                TimeLineSection(dataset = dataset)
-            }
-
-            item {
-                // Recent Transactions
-                RecentTransactions(dataset = dataset)
-            }
+        item {
+            // Recent Transactions
+            RecentTransactions(dataset = dataset)
         }
     }
 }
