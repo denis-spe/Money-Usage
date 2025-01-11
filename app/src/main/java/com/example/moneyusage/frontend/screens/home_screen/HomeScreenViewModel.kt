@@ -27,7 +27,7 @@ class HomeScreenViewModel@Inject constructor(
         launchCatching {
             storageService.addData(Data(
                 userId = accountService.currentUserId,
-                dataName = dataName,
+                category = dataName,
                 amount = amount,
                 description = description,
                 date = date,

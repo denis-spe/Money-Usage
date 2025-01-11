@@ -1,8 +1,9 @@
 package com.example.moneyusage.frontend.screens.home_screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,17 +12,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -35,104 +39,41 @@ import com.example.moneyusage.EXPENSE
 import com.example.moneyusage.INCOME
 import com.example.moneyusage.LENT
 import com.example.moneyusage.R
+import com.example.moneyusage.SAVING
 import com.example.moneyusage.frontend.components.AmountButton
 import com.example.moneyusage.frontend.components.AmountDescriptionInputField
 import com.example.moneyusage.frontend.components.AmountInputField
-import com.example.moneyusage.frontend.components.DateTimePicker
+import com.example.moneyusage.frontend.components.DatePickerModal
 import com.example.moneyusage.frontend.components.DropDownComponent
+import com.example.moneyusage.frontend.components.TimePickerDialog
+import com.example.moneyusage.frontend.components.convertMillisToDate
 import com.example.moneyusage.frontend.dataclasses.AmountButtonState
-import com.example.moneyusage.frontend.dataclasses.DateTime
-import com.example.moneyusage.frontend.helper.WeekDays
-import kotlinx.coroutines.delay
-import java.time.LocalDateTime
 
-@Composable
-fun rememberAutoUpdate(): State<LocalDateTime> {
-    val state = remember { mutableStateOf(LocalDateTime.now()) }
-
-    LaunchedEffect(Unit) {
-        while (true){
-            delay(1000L)
-            state.value = LocalDateTime.now()
-        }
-    }
-    return state
-}
 
 /**
  * Dialog content for floating action button
  * @param onOpenDialogState MutableState<Boolean>: The state of the floating action button
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogAlertContents(
     onOpenDialogState: MutableState<Boolean>,
     viewModel: HomeScreenViewModel
 ) {
-    val date = LocalDateTime.now()
-    val weekDayIdx = when(date.dayOfWeek.name){
-        "SUNDAY" -> 0
-        "MONDAY" -> 1
-        "TUESDAY" -> 2
-        "WEDNESDAY" -> 3
-        "THURSDAY" -> 4
-        "FRIDAY" -> 5
-        "SATURDAY" -> 6
-        else -> 0
-    }
+    // Get the selected date
+    var selectedDateTime by remember { mutableStateOf(System.currentTimeMillis().convertMillisToDate()) }
 
-    val weekDays = WeekDays.entries
-    val currentMonth = date.month.name.lowercase()
-    val dayOfTheWeek = remember {
-        mutableStateOf(TextFieldValue("${weekDays[weekDayIdx]}"))
-    }
-    val mapDayOfMonth = if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else date.dayOfMonth
-    val dayOfTheMonth = remember {
-        mutableStateOf(TextFieldValue("$mapDayOfMonth"))
-    }
-    val month = remember {
-        mutableStateOf(TextFieldValue(currentMonth.replaceFirstChar { it.uppercase() }))
-    }
-    val year = remember {
-        mutableStateOf(TextFieldValue("${date.year}"))
-    }
-    val mapHour = "${if (date.hour < 10) "0${date.hour}" else date.hour}"
-    val mapMinute = "${if (date.minute < 10) "0${date.minute}" else date.minute}"
+    // Handle the dismissed date state
+    val dismissedDate = remember { mutableStateOf(false) }
+    // Handle the dismissed time state
+    val dismissedTime = remember { mutableStateOf(false) }
 
-    val hour = remember {
-        mutableStateOf(
-            TextFieldValue(mapHour)
-        )
-    }
-    val minute = remember {
-        mutableStateOf(
-            TextFieldValue(mapMinute)
-        )
-    }
-
-    LaunchedEffect(key1 = date){
-        hour.value = TextFieldValue(mapHour)
-        minute.value = TextFieldValue(mapMinute)
-        dayOfTheWeek.value = TextFieldValue("${weekDays[weekDayIdx]}")
-        dayOfTheMonth.value = TextFieldValue("$mapDayOfMonth")
-        month.value = TextFieldValue(currentMonth.replaceFirstChar { it.uppercase() })
-        year.value = TextFieldValue("${date.year}")
-    }
-
-    // Initialize the date time object
-    val dateTime = DateTime(
-        year = year.value.text.toInt(),
-        month = month.value.text,
-        day = dayOfTheMonth.value.text.trim().toInt(),
-        hour = hour.value.text.toInt(),
-        minute = minute.value.text.toInt(),
-        dayOfTheWeek = dayOfTheWeek.value.text
-    )
 
     val amountButtonState = remember { mutableStateOf(AmountButtonState.INITIAL) }
     val amountTextField = remember { mutableStateOf(TextFieldValue("")) }
     val descTextState = remember { mutableStateOf(TextFieldValue("")) }
     val selectedTextState = remember { mutableStateOf(TextFieldValue("")) }
-    val selectedIconState = remember { mutableStateOf(R.drawable.description) }
+    val selectedIconState = remember { mutableIntStateOf(R.drawable.description) }
 
     val buttonColor = remember { mutableIntStateOf(R.color.profileIconTextColor) }
     when (selectedTextState.value.text) {
@@ -153,6 +94,11 @@ fun DialogAlertContents(
 
         DEBT -> {
             buttonColor.intValue = R.color.debt
+            amountButtonState.value = AmountButtonState.INITIAL
+        }
+
+        SAVING -> {
+            buttonColor.intValue = R.color.saving
             amountButtonState.value = AmountButtonState.INITIAL
         }
     }
@@ -211,8 +157,8 @@ fun DialogAlertContents(
                     ) {
                         item {
                             DropDownComponent(
-                                label = "Amount Type",
-                                items = listOf(INCOME, DEBT, LENT, EXPENSE),
+                                label = "Category",
+                                items = listOf(INCOME, DEBT, LENT, EXPENSE, SAVING),
                                 selectedText = selectedTextState
                             )
 
@@ -240,16 +186,67 @@ fun DialogAlertContents(
                         }
 
                         item {
-                            // Date time picker
-                            DateTimePicker(
-                                weekDays = weekDays,
-                                dayOfTheWeek = dayOfTheWeek,
-                                dayOfTheMonth = dayOfTheMonth,
-                                month = month,
-                                year = year,
-                                hour = hour,
-                                minute = minute
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                TextButton(
+                                    shape = RoundedCornerShape(10.dp),
+                                    contentPadding = PaddingValues(2.dp),
+                                    onClick = {
+                                        dismissedDate.value = true
+                                    }) {
+                                    Icon(
+                                        imageVector = Icons.Default.DateRange,
+                                        contentDescription = "Date",
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+
+                                    Text(
+                                        "${selectedDateTime.dayOfTheWeek}, " +
+                                                "${selectedDateTime.day} ${selectedDateTime.month} " +
+                                                "${selectedDateTime.year}"
+                                    )
+                                }
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                TextButton(
+                                    shape = RoundedCornerShape(10.dp),
+                                    contentPadding = PaddingValues(2.dp),
+                                    onClick = {
+                                    dismissedTime.value = true
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.AccessTime,
+                                        contentDescription = "Time",
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+
+                                    Text("${if (selectedDateTime.hour!! < 10) 
+                                        "0${selectedDateTime.hour}" else selectedDateTime.hour}:" +
+                                            "${if (selectedDateTime.minute!! < 10) 
+                                                "0${selectedDateTime.minute}" 
+                                            else selectedDateTime.minute}")
+                                }
+                            }
+
+
+                            if (dismissedTime.value)
+                                TimePickerDialog(onDismiss = dismissedTime){
+                                    selectedDateTime = selectedDateTime.copy(hour = it.hour)
+                                    selectedDateTime = selectedDateTime.copy(minute = it.minute)
+                                }
+
+                            // Show the date if true
+                            if (dismissedDate.value)
+                                DatePickerModal(
+                                    onDateSelected = { selectedDateTime = it },
+                                    onDismiss = dismissedDate,
+                                )
                             Spacer(modifier = Modifier.height(lazySpacerHeight))
                         }
 
@@ -259,16 +256,18 @@ fun DialogAlertContents(
                                 amountTextField = amountTextField,
                                 financialType = selectedTextState,
                                 amountButtonState = amountButtonState,
-                                icon = if (selectedIconState.value != R.drawable.description)
-                                    selectedIconState.value else R.drawable.add,
+                                icon = if (selectedIconState.intValue != R.drawable.description)
+                                    selectedIconState.intValue else R.drawable.add,
                                 buttonColor = buttonColor.intValue,
                             ) {
                                 viewModel.onDateSaveClick(
                                     dataName = selectedTextState.value.text,
-                                    amount = amountTextField.value.text.toDouble(),
+                                    amount = amountTextField.value.text
+                                        .replace(",", "")
+                                        .toDouble(),
                                     description = descTextState.value.text,
-                                    date = dateTime,
-                                    icon = selectedIconState.value
+                                    date = selectedDateTime,
+                                    icon = selectedIconState.intValue
                                 )
                                 amountButtonState.value = AmountButtonState.FINISHED
                             }
@@ -279,6 +278,10 @@ fun DialogAlertContents(
             }
         }
     else {
+        amountTextField.value = TextFieldValue("")
+        amountButtonState.value = AmountButtonState.INITIAL
+        descTextState.value = TextFieldValue("")
+        selectedIconState.intValue = R.drawable.description
         selectedTextState.value = TextFieldValue("")
         buttonColor.intValue = R.color.profileIconTextColor
     }

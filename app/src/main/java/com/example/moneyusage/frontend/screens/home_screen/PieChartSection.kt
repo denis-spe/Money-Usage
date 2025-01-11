@@ -33,6 +33,7 @@ import com.example.moneyusage.EXPENSE
 import com.example.moneyusage.INCOME
 import com.example.moneyusage.LENT
 import com.example.moneyusage.R
+import com.example.moneyusage.SAVING
 import com.example.moneyusage.backend.models.Data
 import com.example.moneyusage.frontend.charts.AnimatedPieChart
 import com.example.moneyusage.frontend.dataclasses.PieChartData
@@ -42,10 +43,13 @@ import com.example.moneyusage.frontend.dataclasses.PieChartData
 fun PieChartSection(
     dataset: State<List<Data>>,
 ) {
-    val income = dataset.value.sumOf { if (it.dataName == INCOME) it.amount else 0.0 }
-    val expense = dataset.value.sumOf { if (it.dataName == EXPENSE) it.amount else 0.0 }
-    val debt = dataset.value.sumOf { if (it.dataName == DEBT) it.amount else 0.0 }
-    val lent = dataset.value.sumOf { if (it.dataName == LENT) it.amount else 0.0 }
+    val income = dataset.value.sumOf { if (it.category == INCOME) it.amount else 0.0 }
+    val expense = dataset.value.sumOf { if (it.category == EXPENSE) it.amount else 0.0 }
+    val debt = dataset.value.sumOf { if (it.category == DEBT) it.amount else 0.0 }
+    val lent = dataset.value.sumOf { if (it.category == LENT) it.amount else 0.0 }
+    val saving = dataset.value.sumOf { if (it.category == SAVING) it.amount else 0.0 }
+
+
 
     /**
      * Lists of pie chart data
@@ -67,6 +71,10 @@ fun PieChartSection(
         PieChartData(
             "Lent", lent,
             color = colorResource(id = R.color.lent)
+        ),
+        PieChartData(
+            "Savings", saving,
+            color = colorResource(id = R.color.saving)
         ),
     )
 
@@ -114,6 +122,9 @@ fun PieChartSection(
             }
             PieLabel("Lent", R.color.lent, "square") {
                 centerTextState.value = LENT
+            }
+            PieLabel("Savings", R.color.saving) {
+                centerTextState.value = SAVING
             }
         }
     }

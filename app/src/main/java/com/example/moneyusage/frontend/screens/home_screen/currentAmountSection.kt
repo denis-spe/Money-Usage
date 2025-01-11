@@ -23,19 +23,23 @@ import com.example.moneyusage.DEBT
 import com.example.moneyusage.EXPENSE
 import com.example.moneyusage.INCOME
 import com.example.moneyusage.LENT
+import com.example.moneyusage.SAVING
 import com.example.moneyusage.backend.models.Data
+import com.example.moneyusage.frontend.helper.limitMoneyDigits
 import com.example.moneyusage.frontend.helper.toMoneyFormat
 import kotlinx.coroutines.delay
+import java.math.BigDecimal
 
 @Composable
 fun CurrentAmountSection(dataset: State<List<Data>>) {
 
     // Create a map of the data
     val data = mapOf(
-        INCOME to dataset.value.sumOf { if (it.dataName == INCOME) it.amount else 0.0 },
-        EXPENSE to dataset.value.sumOf { if (it.dataName == EXPENSE) it.amount else 0.0 },
-        DEBT to dataset.value.sumOf { if (it.dataName == DEBT) it.amount else 0.0 },
-        LENT to dataset.value.sumOf { if (it.dataName == LENT) it.amount else 0.0 }
+        INCOME to dataset.value.sumOf { if (it.category == INCOME) it.amount else 0.0 },
+        EXPENSE to dataset.value.sumOf { if (it.category == EXPENSE) it.amount else 0.0 },
+        DEBT to dataset.value.sumOf { if (it.category == DEBT) it.amount else 0.0 },
+        LENT to dataset.value.sumOf { if (it.category == LENT) it.amount else 0.0 },
+        SAVING to dataset.value.sumOf { if (it.category == SAVING) it.amount else 0.0 }
     )
 
     // Space up from the top of the screen
@@ -83,15 +87,20 @@ fun CurrentAmountSection(dataset: State<List<Data>>) {
                 modifier = Modifier.fillMaxWidth()
 
             ) {
-                val amount = data.values.toList()[index].toString()
-                val wholeNum = amount.split(".")[0].toMoneyFormat()
-                var decimalNum = amount.split(".")[1]
-                decimalNum = if (decimalNum.length > 2) decimalNum.substring(0, 2)
-                else decimalNum
+                val getAmount = data.values.toList()[index]
+                var amount = BigDecimal(getAmount).toPlainString()
+                val wholeNumber = amount.substringBefore(".")
+                var decimal = amount.substringAfter(".")
+                decimal = if (decimal.length < 4) decimal else decimal.substring(0..1)
+
+                amount = if (amount.length < 7)
+                    "${wholeNumber.toMoneyFormat()}.${decimal}"
+                else
+                    getAmount.toString().limitMoneyDigits(limitMillionAndHundred = true)
 
 
                 Text(
-                    "R${wholeNum}." + decimalNum,
+                    "R$amount",
                     fontSize = 40.sp
                 )
 

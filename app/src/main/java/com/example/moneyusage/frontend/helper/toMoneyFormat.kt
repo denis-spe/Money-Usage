@@ -20,7 +20,7 @@ fun String.toMoneyFormat() : String{
  * Limit the number of digits in a string to 4
  */
 fun String.limitMoneyDigits(
-    limitMillonAndHundred: Boolean = false
+    limitMillionAndHundred: Boolean = false
 ): String {
     val amountSymbol: String
     val wholeNumber: String
@@ -52,7 +52,7 @@ fun String.limitMoneyDigits(
         fullMoneyFormat = "$wholeNumber.${afterDecimalNumber}$amountSymbol"
     } else {
         fullMoneyFormat = if (this.substringBefore(".").length == 7
-            && limitMillonAndHundred)
+            && limitMillionAndHundred)
             ((this.toDouble() / 1_000_000).toInt()).toString() + "M"
         else
             this.substringBefore(".").toMoneyFormat()

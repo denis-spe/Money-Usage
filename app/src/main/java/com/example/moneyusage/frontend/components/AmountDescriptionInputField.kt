@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Description
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,12 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -170,7 +168,8 @@ fun AmountDescriptionInputField(
             selection = TextRange(state.value.text.length)
         ),
         onValueChange = {
-            state.value = it
+            if (it.text.length <= 52)
+                state.value = it.copy(selection = it.selection)
         },
         leadingIcon = {
             IconButton(
@@ -199,7 +198,9 @@ fun AmountDescriptionInputField(
                 "Description",
                 fontWeight = FontWeight.Bold
             )
-        }
+        },
+        keyboardActions = KeyboardActions.Default,
+        visualTransformation = VisualTransformation.None
     )
 
     if(dialogState.value)
