@@ -1,5 +1,9 @@
 package com.example.moneyusage.frontend.helper
 
+import java.math.BigDecimal
+import kotlin.math.ceil
+import kotlin.math.pow
+
 /**
  * Format a string as money
  * @return string containing money formatted as a string
@@ -19,44 +23,55 @@ fun String.toMoneyFormat() : String{
 /**
  * Limit the number of digits in a string to 4
  */
-fun String.limitMoneyDigits(
-    limitMillionAndHundred: Boolean = false
-): String {
-    val amountSymbol: String
-    val wholeNumber: String
-    var afterDecimalNumber: String
-    val fullMoneyFormat: String
+fun String.limitMoneyDigits(): String {
 
-    if (this.contains("E")){
-        // Get the amount symbol
-        amountSymbol = when(this.substringAfter("E").toInt()){
-            7 -> "M"
-            8 -> "M"
-            9 -> "B"
-            10 -> "B"
-            11 -> "B"
-            12 -> "T"
-            else -> ""
+    if (this.contains("E", ignoreCase = true)) {
+        val numberBeforeE = this.substringBefore("E").toDouble()
+            .roundUpToDecimalPlaces(2)
+        val numberAfterE = this.substringAfter("E").toInt()
+
+        return when (numberAfterE) {
+            in (7 ..8) -> "${numberBeforeE}M" // Million
+            in 9..12 -> "${numberBeforeE}B" // Billion
+            in 12..14 -> "${numberBeforeE}T" // Trillion
+            in 15..17 -> "${numberBeforeE}Q" // Quadrillion
+            in 18..20 -> "${numberBeforeE}S" // Quintillion
+            else -> this // Default fallback
         }
-        // Take the whole number, after decimal and amount symbol
-        wholeNumber = this.substringBefore(".")
-
-        // Take out the number after the decimal point then before the exponent
-        afterDecimalNumber = this.substringAfter(".")
-            .substringBefore("E")
-
-        // Limit the number of digits
-        afterDecimalNumber = afterDecimalNumber.substring(0, 2)
-
-        // Combine the whole number, after decimal and amount symbol
-        fullMoneyFormat = "$wholeNumber.${afterDecimalNumber}$amountSymbol"
-    } else {
-        fullMoneyFormat = if (this.substringBefore(".").length == 7
-            && limitMillionAndHundred)
-            ((this.toDouble() / 1_000_000).toInt()).toString() + "M"
-        else
-            this.substringBefore(".").toMoneyFormat()
     }
 
-    return fullMoneyFormat
+    if (this.length > 4) {
+        return if (this.contains(".")){
+            val decimalPart = this.substringAfter(".")
+            val integerPart = this.substringBefore(".")
+            val formattedIntegerPart = integerPart.toMoneyFormat()
+            "$formattedIntegerPart.$decimalPart"
+        }
+        else this.toMoneyFormat()
+    }
+    return this
+}
+
+fun Double.toMoneyFormat(limitMillionAndHundred: Boolean = false) : String {
+    val amountSymbol = this.toString()
+
+    // Handle the whole number.
+    var wholeNumber = amountSymbol.substringBefore(".")
+
+    if (wholeNumber.length < 7 && !amountSymbol.contains("E")) {
+        wholeNumber = if (wholeNumber.length > 3) wholeNumber.toMoneyFormat() else wholeNumber
+
+        // Handle the after decimal number.
+        var afterDecimalNumber = amountSymbol.substringAfter(".")
+        afterDecimalNumber = if (afterDecimalNumber.length > 2)
+            afterDecimalNumber.substring(0, 2)
+        else afterDecimalNumber
+        return "$wholeNumber.$afterDecimalNumber"
+    }
+    return amountSymbol.limitMoneyDigits()
+}
+
+fun Double.roundUpToDecimalPlaces(decimalPlaces: Int): Double {
+    val factor = 10.0.pow(decimalPlaces)
+    return ceil(this * factor) / factor
 }

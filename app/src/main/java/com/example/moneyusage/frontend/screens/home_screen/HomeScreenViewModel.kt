@@ -15,14 +15,16 @@ class HomeScreenViewModel@Inject constructor(
 
     // Storage service
     val database = storageService.dataset
-    val isLoading = storageService.isLoading
 
     fun onDateSaveClick(
         dataName: String,
         amount: Double,
         description: String,
         date: DateTime,
-        icon: Int
+        icon: Int,
+        isItPayed: Boolean? = null,
+        lentTo: String? = null,
+        debtFrom: String? = null
     ) {
         launchCatching {
             storageService.addData(Data(
@@ -31,7 +33,10 @@ class HomeScreenViewModel@Inject constructor(
                 amount = amount,
                 description = description,
                 date = date,
-                icon = icon
+                icon = icon,
+                isItPayed = isItPayed,
+                lentTo = lentTo,
+                debtFrom = debtFrom
             ))
         }
     }

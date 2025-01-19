@@ -14,6 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.moneyusage.backend.models.Data
 import com.example.moneyusage.frontend.dataclasses.LineChartData
+import com.example.moneyusage.frontend.helper.toMoneyFormat
 import com.example.moneyusage.frontend.screens.home_screen.getColorByName
 import com.example.moneyusage.frontend.screens.home_screen.mappingData
 import ir.ehsannarmani.compose_charts.LineChart
@@ -71,7 +72,7 @@ fun LineChartComposable(data: State<List<Data>>, labels: List<String>) {
                     color = labelsColor,
                 ),
             ) { value ->
-                "R${value.format(2)}"
+                "R${value.toMoneyFormat()}"
             }
         )
     }

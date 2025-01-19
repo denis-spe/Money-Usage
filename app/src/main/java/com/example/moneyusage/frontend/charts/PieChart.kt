@@ -18,6 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +50,7 @@ fun AnimatedPieChart(
     centerText: MutableState<String>? = null,
     strokeWidth: Float = 30f,
     ) {
+
     val localModifier = modifier.size(size)
     val total = data.fold(0f) { acc, pieData ->
         acc + pieData.value.toInt()

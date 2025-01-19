@@ -85,23 +85,15 @@ fun TransactionItem(data: Data) {
     val isDark = isSystemInDarkTheme()
 
     val date = data.date
-    var amount = BigDecimal(data.amount).toPlainString()
-    val wholeNumber = amount.substringBefore(".")
-    var decimal = amount.substringAfter(".")
-    decimal = if (decimal.length < 4) decimal else decimal.substring(0..1)
-
-    amount = if (amount.length < 7)
-        "${wholeNumber.toMoneyFormat()}.${decimal}"
-    else
-        data.amount.toString().limitMoneyDigits(limitMillionAndHundred = true)
+    val amount = data.amount.toMoneyFormat()
 
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
             .padding(start = 10.dp)
             .background(
-                if (isDark) Color.DarkGray.copy(alpha = 0.5f)
-                else Color.LightGray.copy(alpha = 0.2f),
+                if (isDark) Color.DarkGray.copy(alpha = 0.1f)
+                else Color.LightGray.copy(alpha = 0.1f),
                 RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
             )
 

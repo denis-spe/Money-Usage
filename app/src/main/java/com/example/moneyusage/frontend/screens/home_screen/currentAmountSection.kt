@@ -88,19 +88,11 @@ fun CurrentAmountSection(dataset: State<List<Data>>) {
 
             ) {
                 val getAmount = data.values.toList()[index]
-                var amount = BigDecimal(getAmount).toPlainString()
-                val wholeNumber = amount.substringBefore(".")
-                var decimal = amount.substringAfter(".")
-                decimal = if (decimal.length < 4) decimal else decimal.substring(0..1)
 
-                amount = if (amount.length < 7)
-                    "${wholeNumber.toMoneyFormat()}.${decimal}"
-                else
-                    getAmount.toString().limitMoneyDigits(limitMillionAndHundred = true)
 
 
                 Text(
-                    "R$amount",
+                    "R${getAmount.toMoneyFormat(limitMillionAndHundred = true)}",
                     fontSize = 40.sp
                 )
 

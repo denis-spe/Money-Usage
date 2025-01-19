@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import com.example.moneyusage.SAVING
 import com.example.moneyusage.frontend.components.AmountButton
 import com.example.moneyusage.frontend.components.AmountDescriptionInputField
 import com.example.moneyusage.frontend.components.AmountInputField
+import com.example.moneyusage.frontend.components.AmountUserInput
 import com.example.moneyusage.frontend.components.DatePickerModal
 import com.example.moneyusage.frontend.components.DropDownComponent
 import com.example.moneyusage.frontend.components.TimePickerDialog
@@ -60,6 +62,17 @@ fun DialogAlertContents(
     onOpenDialogState: MutableState<Boolean>,
     viewModel: HomeScreenViewModel
 ) {
+    // Collect dataset as state
+    val dataset = viewModel.database.collectAsState(initial = emptyList())
+    viewModel.fetchData()
+
+    // Get all the un payed debts
+    val debts = dataset.value.filter {
+        it.isItPayed == false && it.category == DEBT
+    }.map {
+        it.debtFrom
+    }
+
     // Get the selected date
     var selectedDateTime by remember { mutableStateOf(System.currentTimeMillis().convertMillisToDate()) }
 
@@ -74,6 +87,8 @@ fun DialogAlertContents(
     val descTextState = remember { mutableStateOf(TextFieldValue("")) }
     val selectedTextState = remember { mutableStateOf(TextFieldValue("")) }
     val selectedIconState = remember { mutableIntStateOf(R.drawable.description) }
+    val selectedPayingDebtState = remember { mutableStateOf(TextFieldValue("")) }
+    val debtFromState = remember { mutableStateOf(TextFieldValue("")) }
 
     val buttonColor = remember { mutableIntStateOf(R.color.profileIconTextColor) }
     when (selectedTextState.value.text) {
@@ -111,7 +126,7 @@ fun DialogAlertContents(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(580.dp)
+                    .height(607.dp)
                     .padding(16.dp)
                     .alpha(0.90f),
                 shape = RoundedCornerShape(16.dp),
@@ -165,6 +180,17 @@ fun DialogAlertContents(
                             Spacer(modifier = Modifier.height(lazySpacerHeight))
                         }
 
+                        if (selectedTextState.value.text == DEBT && debts.isNotEmpty())
+                            item {
+                                    DropDownComponent(
+                                        label = "Paying A Debt",
+                                        items = debts,
+                                        selectedText = selectedPayingDebtState
+                                    )
+
+                                    Spacer(modifier = Modifier.height(lazySpacerHeight))
+                            }
+
                         item {
                             // Amount input field
                             AmountInputField(
@@ -174,6 +200,18 @@ fun DialogAlertContents(
 
                             Spacer(modifier = Modifier.height(lazySpacerHeight))
                         }
+
+                        if (selectedTextState.value.text == DEBT &&
+                            selectedPayingDebtState.value.text.isEmpty())
+                            item {
+                                AmountUserInput(
+                                    state = debtFromState,
+                                    label = "A Debt From",
+                                    placeholder = "Borrowing or getting money from"
+                                )
+
+                                Spacer(modifier = Modifier.height(lazySpacerHeight))
+                            }
 
                         item {
                             // Description input field
@@ -256,6 +294,8 @@ fun DialogAlertContents(
                                 amountTextField = amountTextField,
                                 financialType = selectedTextState,
                                 amountButtonState = amountButtonState,
+                                debtFromState = debtFromState,
+                                selectedPayingDebtState = selectedPayingDebtState,
                                 icon = if (selectedIconState.intValue != R.drawable.description)
                                     selectedIconState.intValue else R.drawable.add,
                                 buttonColor = buttonColor.intValue,
@@ -267,7 +307,8 @@ fun DialogAlertContents(
                                         .toDouble(),
                                     description = descTextState.value.text,
                                     date = selectedDateTime,
-                                    icon = selectedIconState.intValue
+                                    icon = selectedIconState.intValue,
+                                    debtFrom = debtFromState.value.text
                                 )
                                 amountButtonState.value = AmountButtonState.FINISHED
                             }
@@ -284,5 +325,6 @@ fun DialogAlertContents(
         selectedIconState.intValue = R.drawable.description
         selectedTextState.value = TextFieldValue("")
         buttonColor.intValue = R.color.profileIconTextColor
+        selectedDateTime = System.currentTimeMillis().convertMillisToDate()
     }
 }

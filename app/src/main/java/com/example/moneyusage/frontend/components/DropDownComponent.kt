@@ -78,6 +78,7 @@ fun <T> DropDownComponent(
             Box(modifier = modifier) {
                 // Text field
                 TextField(
+
                     value = selectedText.value,
                     onValueChange = {},
                     readOnly = true,
@@ -91,7 +92,7 @@ fun <T> DropDownComponent(
                                 fontWeight = FontWeight.Bold
                             )
                     },
-                    textStyle = TextStyle(textAlign = textAlign),
+                    textStyle = TextStyle(textAlign = textAlign, fontWeight = FontWeight.Bold),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = colorResource,
                         focusedLabelColor = colorResource,
@@ -112,10 +113,16 @@ fun <T> DropDownComponent(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    Text(text = it.toString())
+                                    Text(
+                                        text = it.toString(),
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             } else {
-                                Text(text = it.toString())
+                                Text(
+                                    text = it.toString(),
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         },
                         leadingIcon = null,

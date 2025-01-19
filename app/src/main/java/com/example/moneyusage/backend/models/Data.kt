@@ -10,5 +10,8 @@ data class Data(
     val amount: Double = 0.0,
     val description: String = "",
     val date: DateTime? = null,
-    val icon: Int? = null
+    val icon: Int? = null,
+    val isItPayed: Boolean? = null,
+    val debtFrom: String? = null,
+    val lentTo: String? = null
 )
