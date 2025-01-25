@@ -7,14 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.BackHand
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -25,11 +18,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.moneyusage.DEBT
+import com.example.moneyusage.LENT
 import com.example.moneyusage.R
 import com.example.moneyusage.frontend.dataclasses.AmountButtonState
 import kotlinx.coroutines.delay
@@ -39,9 +33,11 @@ fun AmountButton(
     amountTextField: MutableState<TextFieldValue>,
     financialType: MutableState<TextFieldValue>,
     amountButtonState: MutableState<AmountButtonState>,
+    debtFromState: MutableState<TextFieldValue>,
+    lentToState: MutableState<TextFieldValue>,
     icon: Int,
     buttonColor: Int,
-    waitingListener: () -> Unit
+    waitingListener: () -> Unit,
 ){
 
     LaunchedEffect(key1 = amountButtonState.value) {
@@ -88,6 +84,28 @@ fun AmountButton(
                             financialType.value.text.isEmpty()) {
                             amountButtonState.value = AmountButtonState.INSERTDATA
                         }
+
+                        if (financialType.value.text == DEBT &&
+                            debtFromState.value.text.isNotEmpty() ) {
+                            amountButtonState.value = AmountButtonState.LOADING
+                        }
+
+                        if (financialType.value.text == DEBT &&
+                            debtFromState.value.text.isEmpty()){
+                            amountButtonState.value = AmountButtonState.INSERTDATA
+                        }
+
+                        if (financialType.value.text == LENT &&
+                            lentToState.value.text.isNotEmpty()) {
+                            amountButtonState.value = AmountButtonState.LOADING
+                        }
+
+                        if (financialType.value.text == LENT &&
+                            lentToState.value.text.isEmpty()){
+                            amountButtonState.value = AmountButtonState.INSERTDATA
+                        }
+
+
                     },
                     colors = IconButtonDefaults.filledIconButtonColors(
                         containerColor = colorResource(id = button.second),

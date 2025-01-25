@@ -53,7 +53,7 @@ fun DescriptionIconsDialog(
     }
 
     // Search font size
-    val searchFontSize = 16.sp
+    val searchFontSize = 14.sp
 
     Dialog(onDismissRequest = {
         state.value = false
@@ -148,8 +148,8 @@ fun AmountDescriptionInputField(
     state: MutableState<TextFieldValue>,
     selectedIconState: MutableState<Int>
 ){
-    val fontWeight = FontWeight.Bold
-    val fontSize = 20.sp
+    val fontWeight = FontWeight.Medium
+    val fontSize = 17.sp
 
     val dialogState = remember {
         mutableStateOf(false)

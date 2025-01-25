@@ -1,6 +1,7 @@
 package com.example.moneyusage.backend.models
 
 import com.example.moneyusage.frontend.dataclasses.DateTime
+import com.example.moneyusage.frontend.helper.PaymentStatus
 import com.google.firebase.firestore.DocumentId
 
 data class Data(
@@ -11,7 +12,7 @@ data class Data(
     val description: String = "",
     val date: DateTime? = null,
     val icon: Int? = null,
-    val isItPayed: Boolean? = null,
+    val paymentStatus: PaymentStatus? = null,
     val debtFrom: String? = null,
     val lentTo: String? = null
 )

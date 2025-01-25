@@ -19,7 +19,6 @@ fun AmountUserInput(
     state: MutableState<TextFieldValue>,
     label: String,
     placeholder: String,
-    modifier: Modifier = Modifier
 ){
     // Search font size
     val searchFontSize = 16.sp
@@ -47,6 +46,6 @@ fun AmountUserInput(
                 fontSize = searchFontSize,
                 fontWeight= FontWeight.Bold
             )
-        }
+        },
     )
 }
