@@ -2,13 +2,20 @@ package com.example.moneyusage.frontend.screens.home_screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,14 +24,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.moneyusage.R
+import com.example.moneyusage.backend.models.Data
 import com.example.moneyusage.frontend.dataclasses.BottomIcon
 import com.example.moneyusage.frontend.dataclasses.Styles
+import kotlinx.coroutines.CoroutineScope
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun BottomContents(
     lazyState: LazyListState,
-    onOpenDialogState: MutableState<Boolean>
+    onUpdateFloatActionButtonState: MutableState<Boolean>,
+    viewModel: HomeScreenViewModel,
+    dataset: State<List<Data>>,
+    scope: CoroutineScope,
+    snackBarHostState: SnackbarHostState,
+    showBottomSheet: MutableState<Boolean>,
+    sheetState: SheetState,
 ) {
 
     val styles = Styles()
@@ -67,6 +83,7 @@ fun BottomContents(
     BottomAppBar(
         modifier = Modifier,
         containerColor = styles.bottomAppBarBackgroundColor,
+        tonalElevation = 0.dp,
         actions = {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -84,7 +101,29 @@ fun BottomContents(
             }
         },
         floatingActionButton = {
-            FloatActionButton(onOpenDialogState = onOpenDialogState)
-        }
+            UpdatingFloatActionButton(
+                showBottomSheet = showBottomSheet,
+                state = onUpdateFloatActionButtonState
+            )
+        },
+        contentPadding = PaddingValues(end = 8.dp)
     )
+
+    if (showBottomSheet.value) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet.value = false
+            },
+            sheetState = sheetState,
+            containerColor = BottomSheetDefaults.ContainerColor.copy(0.95f)
+        ) {
+            ModalBottomSheetContent(
+                dataset = dataset,
+                viewModel = viewModel,
+                scope = scope,
+                snackBarHostState = snackBarHostState,
+                showBottomSheet = showBottomSheet
+            )
+        }
+    }
 }

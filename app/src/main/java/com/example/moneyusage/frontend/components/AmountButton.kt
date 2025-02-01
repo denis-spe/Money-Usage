@@ -12,6 +12,7 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -26,7 +27,9 @@ import com.example.moneyusage.DEBT
 import com.example.moneyusage.LENT
 import com.example.moneyusage.R
 import com.example.moneyusage.frontend.dataclasses.AmountButtonState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AmountButton(
@@ -38,7 +41,7 @@ fun AmountButton(
     icon: Int,
     buttonColor: Int,
     waitingListener: () -> Unit,
-){
+) {
 
     LaunchedEffect(key1 = amountButtonState.value) {
         if (amountButtonState.value == AmountButtonState.LOADING) {
@@ -76,35 +79,40 @@ fun AmountButton(
                     onClick = {
                         if (amountButtonState.value == AmountButtonState.INITIAL
                             && amountTextField.value.text.isNotEmpty() &&
-                            financialType.value.text.isNotEmpty()) {
+                            financialType.value.text.isNotEmpty()
+                        ) {
                             amountButtonState.value = AmountButtonState.LOADING
                         }
 
                         if (amountTextField.value.text.isEmpty() ||
-                            financialType.value.text.isEmpty()) {
+                            financialType.value.text.isEmpty()
+                        ) {
                             amountButtonState.value = AmountButtonState.INSERTDATA
                         }
 
                         if (financialType.value.text == DEBT &&
-                            debtFromState.value.text.isNotEmpty() ) {
+                            debtFromState.value.text.isNotEmpty()
+                        ) {
                             amountButtonState.value = AmountButtonState.LOADING
                         }
 
                         if (financialType.value.text == DEBT &&
-                            debtFromState.value.text.isEmpty()){
+                            debtFromState.value.text.isEmpty()
+                        ) {
                             amountButtonState.value = AmountButtonState.INSERTDATA
                         }
 
                         if (financialType.value.text == LENT &&
-                            lentToState.value.text.isNotEmpty()) {
+                            lentToState.value.text.isNotEmpty()
+                        ) {
                             amountButtonState.value = AmountButtonState.LOADING
                         }
 
                         if (financialType.value.text == LENT &&
-                            lentToState.value.text.isEmpty()){
+                            lentToState.value.text.isEmpty()
+                        ) {
                             amountButtonState.value = AmountButtonState.INSERTDATA
                         }
-
 
                     },
                     colors = IconButtonDefaults.filledIconButtonColors(
@@ -120,7 +128,7 @@ fun AmountButton(
                     )
                 }
             }
-            
+
             if (amountButtonState.value == AmountButtonState.LOADING) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

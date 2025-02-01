@@ -8,6 +8,7 @@ import com.example.moneyusage.backend.models.services.impl.StorageServiceImpl
 import com.example.moneyusage.backend.models.services.interf.AccountService
 import com.example.moneyusage.frontend.dataclasses.DateTime
 import com.example.moneyusage.frontend.helper.PaymentStatus
+import com.example.moneyusage.frontend.helper.clearUpCommas
 import com.example.moneyusage.frontend.screens.AppViewModel
 import javax.inject.Inject
 
@@ -33,9 +34,8 @@ class HomeScreenViewModel@Inject constructor(
             storageService.addData(Data(
                 userId = accountService.currentUserId,
                 category = category.value.text,
-                amount = amount.value.text
-                    .replace(",", "")
-                    .toDouble(),
+                amount = amount.value.text.clearUpCommas
+                    ,
                 description = description.value.text,
                 date = date,
                 icon = icon,
@@ -55,6 +55,19 @@ class HomeScreenViewModel@Inject constructor(
     fun fetchData() {
         storageService.fetchData()
     }
+
+    fun updateData(data: Data){
+        launchCatching {
+            storageService.updateData(data)
+        }
+    }
+
+    fun deleteData(dataId: String){
+        launchCatching {
+            storageService.deleteData(dataId)
+        }
+    }
+
 
     fun initialize(restartApp: (String) -> Unit) {
         launchCatching {

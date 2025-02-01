@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.moneyusage.backend.models.Data
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -20,15 +20,9 @@ fun MainContents(
     viewModel: HomeScreenViewModel,
     innerPadding: PaddingValues,
     state: LazyListState,
-    restartApp: (String) -> Unit
+    restartApp: (String) -> Unit,
+    dataset: State<List<Data>>
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.initialize(restartApp)
-    }
-
-    // Collect dataset as state
-    val dataset = viewModel.database.collectAsState(initial = emptyList())
-    viewModel.fetchData()
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,

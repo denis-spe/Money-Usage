@@ -75,3 +75,8 @@ fun Double.roundUpToDecimalPlaces(decimalPlaces: Int): Double {
     val factor = 10.0.pow(decimalPlaces)
     return ceil(this * factor) / factor
 }
+
+val String.clearUpCommas: Double get() {
+    return this.replace(",", "")
+        .toDouble()
+}

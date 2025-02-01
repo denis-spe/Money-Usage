@@ -1,6 +1,8 @@
 package com.example.moneyusage.frontend.components
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -8,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -23,11 +27,13 @@ import com.example.moneyusage.frontend.helper.toMoneyFormat
 fun AmountInputField(
     amountButtonState: MutableState<AmountButtonState>,
     state: MutableState<TextFieldValue>,
+    placeHolder: MutableState<String>? = null
 ){
     val fontWeight = FontWeight.Bold
     val fontSize = 23.sp
     
     TextField(
+        modifier = Modifier.fillMaxWidth(),
         value = TextFieldValue(
             text = state.value.text,
             selection = TextRange(state.value.text.length)
@@ -61,10 +67,11 @@ fun AmountInputField(
         },
         textStyle = TextStyle(
             fontWeight = fontWeight,
-            fontSize = fontSize),
+            fontSize = fontSize,
+        ),
         placeholder = {
             Text(
-                text = "0.00",
+                text = placeHolder?.value ?: "0.00",
                 fontWeight = fontWeight,
                 fontSize = fontSize
             )

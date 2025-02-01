@@ -19,11 +19,12 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -53,6 +55,9 @@ import com.example.moneyusage.frontend.components.TimePickerDialog
 import com.example.moneyusage.frontend.components.convertMillisToDate
 import com.example.moneyusage.frontend.dataclasses.AmountButtonState
 import com.example.moneyusage.frontend.helper.PaymentStatus
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 /**
@@ -64,12 +69,11 @@ import com.example.moneyusage.frontend.helper.PaymentStatus
 @Composable
 fun DialogAlertContents(
     onOpenDialogState: MutableState<Boolean>,
-    viewModel: HomeScreenViewModel
+    viewModel: HomeScreenViewModel,
+    snackBarHostState: SnackbarHostState,
+    scope: CoroutineScope
 ) {
-    // Collect dataset as state
-    val dataset = viewModel.database.collectAsState(initial = emptyList())
-    viewModel.fetchData()
-
+    val lazySpacerHeight = 15.dp
 
     // Get the selected date
     var selectedDateTime by remember { mutableStateOf(System.currentTimeMillis()
@@ -146,23 +150,19 @@ fun DialogAlertContents(
                         fontSize = 22.sp
                     )
 
-                    Text(
-                        text = "Add person finance amounts",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
-                    )
+                    Spacer(Modifier.height(10.dp))
 
-                    if (categoryState.value.text.isNotEmpty()){
+                    categoryState.value.text.let {
                         Text(
-                            text = categoryState.value.text,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
+                            text = "Add your amount for a given " +
+                                    it.ifEmpty { "usage" },
+                            fontWeight = FontWeight.W600,
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center
                         )
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
-
-                    val lazySpacerHeight = 15.dp
 
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -289,6 +289,8 @@ fun DialogAlertContents(
                         }
 
                         item {
+                            val categoryText = categoryState.value.text
+
                             // Submit button
                             AmountButton(
                                 amountTextField = amountTextField,
@@ -313,9 +315,17 @@ fun DialogAlertContents(
                                         categoryState.value.text == LENT)
                                         PaymentStatus.UNPAID else null
                                 )
-                                amountButtonState.value = AmountButtonState.FINISHED
-                            }
+                                scope.launch {
+                                    amountButtonState.value = AmountButtonState.FINISHED
+                                    delay(100)
+                                    onOpenDialogState.value = false
+                                }
 
+                                scope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        "$categoryText was successful")
+                                }
+                            }
                         }
                     }
                 }
