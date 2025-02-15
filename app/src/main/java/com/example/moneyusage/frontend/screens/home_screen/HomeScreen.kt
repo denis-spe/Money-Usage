@@ -10,7 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,10 +20,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.moneyusage.backend.models.services.impl.AccountServiceImpl
 import com.example.moneyusage.backend.models.services.impl.StorageServiceImpl
+import com.example.moneyusage.frontend.helper.Period
 
 // --------- LandPage -----------
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,6 +50,10 @@ fun HomeScreen(
     // Lazy list state
     val listState = rememberLazyListState()
 
+    val periodState = remember {
+        mutableStateOf(Period.Today)
+    }
+
     // Open dialog state
     val onOpenDialogState = remember { mutableStateOf(false) }
 
@@ -65,16 +73,19 @@ fun HomeScreen(
     // Bottom sheet state
     val showBottomSheet = remember { mutableStateOf(false) }
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     // Scaffold
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
             .pointerInput(Unit){
                 detectTapGestures {
                     mainFloatActionButtonClickState.value = false
                 }
             },
-        topBar = { TopContents() },
+        topBar = { TopContents(scrollBehavior, periodState) },
         bottomBar = {
             BottomContents(
                 lazyState = listState,
@@ -103,11 +114,10 @@ fun HomeScreen(
 
         // Main contents
         MainContents(
-            viewModel = viewModel,
             innerPadding = innerPadding,
             state = listState,
             dataset = dataset,
-            restartApp = restartApp
+            periodState =  periodState
         )
     }
 

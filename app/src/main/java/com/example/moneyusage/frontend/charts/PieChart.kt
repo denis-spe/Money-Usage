@@ -31,8 +31,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastFilter
 import com.example.moneyusage.frontend.dataclasses.PieChartData
 import com.example.moneyusage.frontend.helper.limitMoneyDigits
+import com.example.moneyusage.frontend.helper.toMoneyFormat
 import kotlinx.coroutines.launch
 
 data class ArcData(
@@ -48,8 +50,11 @@ fun AnimatedPieChart(
     modifier: Modifier = Modifier,
     size: Dp = 100.dp,
     centerText: MutableState<String>? = null,
+    showAmountInCenter: String? = null,
     strokeWidth: Float = 30f,
-    ) {
+    fontSize: Int = 10,
+    fontColor: Color? = null
+) {
 
     val localModifier = modifier.size(size)
     val total = data.fold(0f) { acc, pieData ->
@@ -112,23 +117,36 @@ fun AnimatedPieChart(
                     fontSize = 11.sp,
                     color = minData.color
                 )
-            }
-            else {
-                val selectData = data.first { first -> first.label == centerText?.value }
-                Text(
-                    "${selectData.label}: ${selectData.value.toString().limitMoneyDigits()}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = selectData.color
-                )
+            } else {
+                if (centerText != null) {
+                    val selectData = data.first { first -> first.label == centerText.value }
+                    Text(
+                        "${selectData.label}: ${selectData.value.toString().limitMoneyDigits()}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = selectData.color
+                    )
 
-                Text("max-min",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .clickable {  centerText?.value = ""  }
-                        .padding(start = 5.dp, end = 5.dp),
-                    fontSize = 10.sp
-                )
+
+                    Text("max-min",
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .clickable { centerText.value = "" }
+                            .padding(start = 5.dp, end = 5.dp),
+                        fontSize = fontSize.sp
+                    )
+                }
+
+                if (centerText == null && !showAmountInCenter.isNullOrEmpty()){
+                    val filteredData = data.fastFilter { it.label == showAmountInCenter }[0]
+                    val amount = filteredData.value
+                        .toMoneyFormat()
+                    Text(
+                        "R $amount",
+                        fontSize = fontSize.sp,
+                        color = fontColor ?: filteredData.color
+                    )
+                }
 
             }
         }

@@ -1,27 +1,28 @@
 package com.example.moneyusage.frontend.screens.home_screen
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,85 +35,103 @@ import com.example.moneyusage.frontend.components.TopAppButton
 import com.example.moneyusage.frontend.dataclasses.Styles
 import com.example.moneyusage.frontend.dataclasses.TopAppButtonArgs
 import com.example.moneyusage.frontend.dataclasses.TopAppButtonColors
+import com.example.moneyusage.frontend.helper.Period
 
 @RequiresApi(Build.VERSION_CODES.P)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopContents(){
-    TopAppBar(
+fun TopContents(scrollBehavior: TopAppBarScrollBehavior, periodState: MutableState<Period>) {
+
+    MediumTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
+            titleContentColor = Color.Transparent
         ),
-        title = { TopAppBarTitle() },
+        title = { TopAppBarTitle(periodState) },
         navigationIcon = { TopAppBarNavigationIcon() },
-        actions = { TopAppBarActions() }
+        actions = { TopAppBarActions() },
+        scrollBehavior = scrollBehavior,
     )
 }
 
+@SuppressLint("SuspiciousIndentation")
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun TopAppBarTitle() {
+fun TopAppBarTitle(periodState: MutableState<Period>) {
     val styles = Styles()
 
     val topBarTextColor = if (isSystemInDarkTheme()) styles.darkButtonTextColor
     else styles.buttonTextColor
 
-    val selectedButton = remember {
-        mutableStateOf("All")
-    }
-
     val primaryThemeColor = colorResource(id = R.color.primaryThemeColor)
     val secondaryThemeColor = colorResource(id = R.color.secondaryThemeColor)
+    val materialColor = MaterialTheme.colorScheme.onBackground
 
     // Handle background changes on click
-    val selectedButtonBackground: (label: String) -> TopAppButtonColors = {
-        val bgColor = if (selectedButton.value == it) primaryThemeColor
+    val selectedButtonBackground: (label: Period) -> TopAppButtonColors = {
+        val bgColor = if (periodState.value == it) primaryThemeColor
         else secondaryThemeColor
-        val textColor = if (selectedButton.value == it) Color.White
-        else primaryThemeColor
+        val textColor = if (periodState.value == it) primaryThemeColor
+        else materialColor
         TopAppButtonColors(bgColor, textColor)
     }
 
     val topAppButtonArgs = listOf(
         // All arguments
         TopAppButtonArgs(
-            "All",
+            Period.Today,
             topBarTextColor = topBarTextColor,
-            selectedButton = selectedButton,
+            selectedButton = periodState,
             onClick = {
             }
         ),
 
         // Today argument
         TopAppButtonArgs(
-            "Today",
+            Period.Yesterday,
             topBarTextColor = topBarTextColor,
-            selectedButton = selectedButton,
+            selectedButton = periodState,
+            onClick = {
+            }
+        ),
+
+        // Today argument
+        TopAppButtonArgs(
+            Period.Weekly,
+            topBarTextColor = topBarTextColor,
+            selectedButton = periodState,
             onClick = {
             }
         ),
 
         // Yesterday argument
         TopAppButtonArgs(
-            "Yesterday",
+            Period.All,
             topBarTextColor = topBarTextColor,
-            selectedButton = selectedButton,
+            selectedButton = periodState,
             onClick = {
             }
         ),
     )
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start,
-    ) {
-        topAppButtonArgs.forEach {
-            Spacer(modifier = Modifier.width(5.dp))
-            TopAppButton(
-                topAppButtonArgs = it,
-                selectedButtonBackground = selectedButtonBackground
-            )
-        }
+        LazyRow (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+                .padding(end = 10.dp)
+        ) {
+
+            items(topAppButtonArgs.size){
+                topAppButtonArgs[it].also {
+                    arg ->
+                    TopAppButton(
+                        topAppButtonArgs = arg,
+                        selectedButtonBackground = selectedButtonBackground
+                    )
+                }
+            }
+
     }
 }
 

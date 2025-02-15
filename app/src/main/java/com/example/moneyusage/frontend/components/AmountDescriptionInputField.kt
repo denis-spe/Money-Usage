@@ -38,14 +38,14 @@ import com.example.moneyusage.R
 @Composable
 fun DescriptionIconsDialog(
     state: MutableState<Boolean>,
-    selectedIcon: MutableState<Int>
+    selectedIcon: MutableState<String>
 ){
     val searchState = remember {
         mutableStateOf(TextFieldValue())
     }
 
     // Original icon list
-    val originalIconList = dialogIcons()
+    val originalIconList = icons
 
     // Filtered icon list
     val filteredList = remember {
@@ -120,7 +120,7 @@ fun DescriptionIconsDialog(
                         ) {
                             IconButton(
                                 onClick = {
-                                    selectedIcon.value = icon
+                                    selectedIcon.value = name
                                     state.value = false
                                 }){
                                 Image(
@@ -146,7 +146,7 @@ fun DescriptionIconsDialog(
 @Composable
 fun AmountDescriptionInputField(
     state: MutableState<TextFieldValue>,
-    selectedIconState: MutableState<Int>
+    selectedIconState: MutableState<String>
 ){
     val fontWeight = FontWeight.Medium
     val fontSize = 17.sp
@@ -158,8 +158,8 @@ fun AmountDescriptionInputField(
     val descIcon = R.drawable.description
 
     // Handle icon change
-    val selectedIcon = if(selectedIconState.value != descIcon)
-        selectedIconState.value
+    val selectedIcon = if(icons[selectedIconState.value] != descIcon)
+        icons[selectedIconState.value]
     else descIcon
 
     TextField(
@@ -177,8 +177,9 @@ fun AmountDescriptionInputField(
                     dialogState.value = true
                 }
             ) {
-                Image(painter = painterResource(selectedIcon),
-                    contentDescription = "description")
+
+                selectedIcon?.let { painterResource(it) }
+                    ?.let { Image(painter = it, contentDescription = selectedIconState.value) }
             }
         },
         textStyle = TextStyle(

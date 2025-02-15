@@ -1,6 +1,7 @@
 package com.example.moneyusage.frontend.screens.home_screen
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,11 +38,107 @@ import com.example.moneyusage.R
 import com.example.moneyusage.SAVING
 import com.example.moneyusage.backend.models.Data
 import com.example.moneyusage.frontend.charts.AnimatedPieChart
+import com.example.moneyusage.frontend.components.convertMillisToDate
 import com.example.moneyusage.frontend.dataclasses.PieChartData
+import java.util.Calendar
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun PieChartSection(
+fun TodayPeriodPieChart(
+    dataset: State<List<Data>>,
+) {
+
+    val currentDate = Calendar.getInstance()
+    val datetime = currentDate.timeInMillis.convertMillisToDate()
+
+    val filteredDataset = dataset.value.filter {
+        data ->
+        data.date?.year == datetime.year &&
+        data.date?.month == datetime.month &&
+        data.date?.day == datetime.day
+    }
+
+    val income = filteredDataset.sumOf { if (it.category == INCOME) it.amount else 0.0 }
+    val expense = filteredDataset.sumOf { if (it.category == EXPENSE) it.amount else 0.0 }
+    val debt = filteredDataset.sumOf { if (it.category == DEBT) it.amount else 0.0 }
+    val lent = filteredDataset.sumOf { if (it.category == LENT) it.amount else 0.0 }
+    val saving = filteredDataset.sumOf { if (it.category == SAVING) it.amount else 0.0 }
+
+    /**
+     * Lists of pie chart data
+     */
+    val data = listOf(
+        PieChartData(
+            INCOME, income,
+            color = colorResource(id = R.color.income)
+        ),
+        PieChartData(
+            EXPENSE, expense,
+            color = colorResource(id = R.color.expense)
+        ),
+        PieChartData(
+            DEBT, debt,
+            color = colorResource(id = R.color.debt)
+        ),
+        PieChartData(
+            LENT, lent,
+            color = colorResource(id = R.color.lent)
+        ),
+        PieChartData(
+            SAVING, saving,
+            color = colorResource(id = R.color.saving)
+        ),
+    )
+
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .padding(top = 50.dp)
+    ) {
+        item {
+            SmallPieChart(
+                label = INCOME,
+                data = data,
+                colorId = R.color.income
+            )
+        }
+        item {
+            SmallPieChart(
+                label = EXPENSE,
+                data = data,
+                colorId = R.color.expense
+            )
+        }
+
+        item {
+            SmallPieChart(
+                label = DEBT,
+                data = data,
+                colorId = R.color.debt
+            )
+        }
+
+        item {
+            SmallPieChart(
+                label = LENT,
+                data = data,
+                colorId = R.color.lent
+            )
+        }
+
+        item {
+            SmallPieChart(
+                label = SAVING,
+                data = data,
+                colorId = R.color.saving
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.P)
+@Composable
+fun AllPeriodPieChart(
     dataset: State<List<Data>>,
 ) {
     val income = dataset.value.sumOf { if (it.category == INCOME) it.amount else 0.0 }
@@ -181,3 +279,43 @@ fun ColorBox(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
+@Composable
+fun SmallPieChart(
+    label: String,
+    data: List<PieChartData>,
+    colorId: Int
+){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        AnimatedPieChart(
+            modifier = Modifier.padding(10.dp),
+            data = data
+                .sortedBy { if (it.label == label) 0 else 1 }
+                .map {
+                    if (it.label == label) {
+                        if (it.value != 0.0) {
+                            it.copy(color = colorResource(id = colorId))
+                        } else {
+                            it.copy(color = Color.Gray.copy())
+                        }
+                    } else {
+                        it.copy(color = Color.Transparent)
+                    }
+                },
+            strokeWidth = 5f,
+            size = 50.dp,
+            centerText = null,
+            showAmountInCenter = label
+        )
+
+        Text(
+            label,
+            color = colorResource(id = colorId),
+            fontSize = 10.sp
+        )
+
+    }
+}

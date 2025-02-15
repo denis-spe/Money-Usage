@@ -25,7 +25,7 @@ class HomeScreenViewModel@Inject constructor(
         amount: MutableState<TextFieldValue>,
         description: MutableState<TextFieldValue>,
         date: DateTime,
-        icon: Int,
+        icon: String,
         paymentStatus: PaymentStatus? = null,
         lentTo: MutableState<TextFieldValue>? = null,
         debtFrom: MutableState<TextFieldValue>? = null
@@ -38,7 +38,7 @@ class HomeScreenViewModel@Inject constructor(
                     ,
                 description = description.value.text,
                 date = date,
-                icon = icon,
+                dataIcon = icon,
                 paymentStatus = paymentStatus,
                 lentTo = lentTo?.value?.text,
                 debtFrom = debtFrom?.value?.text

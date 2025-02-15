@@ -53,6 +53,7 @@ import com.example.moneyusage.frontend.components.DatePickerModal
 import com.example.moneyusage.frontend.components.DropDownComponent
 import com.example.moneyusage.frontend.components.TimePickerDialog
 import com.example.moneyusage.frontend.components.convertMillisToDate
+import com.example.moneyusage.frontend.components.icons
 import com.example.moneyusage.frontend.dataclasses.AmountButtonState
 import com.example.moneyusage.frontend.helper.PaymentStatus
 import kotlinx.coroutines.CoroutineScope
@@ -89,7 +90,7 @@ fun DialogAlertContents(
     val amountTextField = remember { mutableStateOf(TextFieldValue("")) }
     val descTextState = remember { mutableStateOf(TextFieldValue("")) }
     val categoryState = remember { mutableStateOf(TextFieldValue("")) }
-    val selectedIconState = remember { mutableIntStateOf(R.drawable.description) }
+    val selectedIconState = remember { mutableStateOf("Description") }
     val debtFromState = remember { mutableStateOf(TextFieldValue("")) }
     val lentTo = remember { mutableStateOf(TextFieldValue("")) }
 
@@ -290,6 +291,8 @@ fun DialogAlertContents(
 
                         item {
                             val categoryText = categoryState.value.text
+                            val selectedIcon = icons[selectedIconState.value]
+                                ?: R.drawable.description
 
                             // Submit button
                             AmountButton(
@@ -298,8 +301,8 @@ fun DialogAlertContents(
                                 amountButtonState = amountButtonState,
                                 debtFromState = debtFromState,
                                 lentToState = lentTo,
-                                icon = if (selectedIconState.intValue != R.drawable.description)
-                                    selectedIconState.intValue else R.drawable.add,
+                                icon = if (selectedIcon != R.drawable.description)
+                                    selectedIcon else R.drawable.add,
                                 buttonColor = buttonColor.intValue,
                             ) {
                                 viewModel.onDateSaveClick(
@@ -307,7 +310,7 @@ fun DialogAlertContents(
                                     amount = amountTextField,
                                     description = descTextState,
                                     date = selectedDateTime,
-                                    icon = selectedIconState.intValue,
+                                    icon = selectedIconState.value,
                                     debtFrom = debtFromState,
                                     lentTo = lentTo,
                                     paymentStatus = if (
@@ -335,7 +338,7 @@ fun DialogAlertContents(
         amountTextField.value = TextFieldValue("")
         amountButtonState.value = AmountButtonState.INITIAL
         descTextState.value = TextFieldValue("")
-        selectedIconState.intValue = R.drawable.description
+        selectedIconState.value = "Description"
         categoryState.value = TextFieldValue("")
         buttonColor.intValue = R.color.profileIconTextColor
         selectedDateTime = System.currentTimeMillis().convertMillisToDate()

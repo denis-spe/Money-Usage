@@ -1,5 +1,7 @@
 package com.example.moneyusage.frontend.screens.home_screen
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +45,7 @@ import com.example.moneyusage.LENT
 import com.example.moneyusage.R
 import com.example.moneyusage.SAVING
 import com.example.moneyusage.backend.models.Data
+import com.example.moneyusage.frontend.components.icons
 import com.example.moneyusage.frontend.helper.PaymentStatus
 import com.example.moneyusage.frontend.helper.limitMoneyDigits
 import com.example.moneyusage.frontend.helper.toMoneyFormat
@@ -127,10 +130,15 @@ fun TransactionItem(data: Data) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            data.icon?.let { painterResource(it) }
+            icons[data.dataIcon]
+                ?.let { painterResource(it) }
                 ?.let {
-                    Image(painter = it, contentDescription = null)
+                Image(
+                    painter = it,
+                    contentDescription = data.dataIcon)
                 }
+
+
             Spacer(modifier = Modifier.width(10.dp))
 
             Row(
@@ -422,23 +430,4 @@ fun reportDescription(data: Data): String = when(data.category){
 }
 
 @Composable
-fun reportImage(data: Data): Painter? = when(data.category){
-    DEBT -> {
-        when(data.paymentStatus) {
-            PaymentStatus.PAYING -> painterResource(id = R.drawable.paying)
-            PaymentStatus.UNPAID -> painterResource(id = R.drawable.unpaid)
-            else -> null
-        }
-    }
-    LENT -> {
-        when(data.paymentStatus) {
-            PaymentStatus.PAYING -> painterResource(id = R.drawable.paying)
-            PaymentStatus.UNPAID -> painterResource(id = R.drawable.unpaid)
-            else -> null
-        }
-    }
-    INCOME -> painterResource(id = R.drawable.income)
-    EXPENSE -> painterResource(id = R.drawable.expense)
-    SAVING -> painterResource(id = R.drawable.saving)
-    else -> null
-}
+fun reportImage(data: Data): Painter? = icons[data.dataIcon]?.let { painterResource(it) }
