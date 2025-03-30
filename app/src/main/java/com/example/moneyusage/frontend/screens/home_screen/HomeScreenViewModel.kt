@@ -9,6 +9,7 @@ import com.example.moneyusage.backend.models.services.interf.AccountService
 import com.example.moneyusage.frontend.dataclasses.DateTime
 import com.example.moneyusage.frontend.helper.PaymentStatus
 import com.example.moneyusage.frontend.helper.clearUpCommas
+import com.example.moneyusage.frontend.helper.roundUpToDecimalPlaces
 import com.example.moneyusage.frontend.screens.AppViewModel
 import javax.inject.Inject
 
@@ -34,8 +35,7 @@ class HomeScreenViewModel@Inject constructor(
             storageService.addData(Data(
                 userId = accountService.currentUserId,
                 category = category.value.text,
-                amount = amount.value.text.clearUpCommas
-                    ,
+                amount = amount.value.text.clearUpCommas,
                 description = description.value.text,
                 date = date,
                 dataIcon = icon,

@@ -71,6 +71,12 @@ fun Today(
                 dataset = dataset
             )
         }
+
+        item {
+            TodaySectionTimeLine(
+                dataset = dataset
+            )
+        }
     }
 }
 
@@ -138,7 +144,7 @@ fun All(
 
         // Time Line section
         item {
-            TimeLineSection(dataset = dataset)
+            AllSectionTimeLine(dataset = dataset)
         }
 
         item {

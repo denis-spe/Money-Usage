@@ -43,9 +43,9 @@ import com.example.moneyusage.frontend.helper.Period
 fun TopContents(scrollBehavior: TopAppBarScrollBehavior, periodState: MutableState<Period>) {
 
     MediumTopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent,
-            titleContentColor = Color.Transparent
+        colors = TopAppBarDefaults.mediumTopAppBarColors().copy(
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background
         ),
         title = { TopAppBarTitle(periodState) },
         navigationIcon = { TopAppBarNavigationIcon() },

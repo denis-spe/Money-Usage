@@ -6,19 +6,14 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.example.moneyusage.backend.models.Data
 import com.example.moneyusage.frontend.dataclasses.LineChartData
 import com.example.moneyusage.frontend.helper.toMoneyFormat
-import com.example.moneyusage.frontend.screens.home_screen.getColorByName
-import com.example.moneyusage.frontend.screens.home_screen.mappingData
 import ir.ehsannarmani.compose_charts.LineChart
-import ir.ehsannarmani.compose_charts.extensions.format
 import ir.ehsannarmani.compose_charts.models.AnimationMode
 import ir.ehsannarmani.compose_charts.models.DotProperties
 import ir.ehsannarmani.compose_charts.models.DrawStyle
@@ -32,25 +27,11 @@ import ir.ehsannarmani.compose_charts.models.StrokeStyle
 
 
 @Composable
-fun LineChartComposable(data: State<List<Data>>, labels: List<String>) {
+fun LineChartComposable(data: List<LineChartData>, labels: List<String>) {
     val isDark = isSystemInDarkTheme()
     val labelsColor = if (isDark) Color.White else Color.Black
 
-    val mappedData = if (data.value.isNotEmpty()) data.mappingData().map {
-        LineChartData(
-            name = it.key,
-            values = it.value,
-            color = getColorByName(it.key)
-        )
-    } else listOf(
-        LineChartData(
-            name = "",
-            values = listOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
-            color = Color.Unspecified
-        )
-    )
-
-    val dataset = mappedData.map {
+    val dataset = data.map {
         Line(
             label = it.name,
             values = it.values,

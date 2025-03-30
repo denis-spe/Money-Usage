@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.1"
+agp = "8.9.1"
 composeCharts = "0.1.0"
 firebaseBom = "32.7.4"
 googleHiltAndroid = "2.44"
@@ -40,6 +40,7 @@ hiltCommon = "1.2.0"
 hiltNavigation = "1.2.0"
 daggerAndroid = "2.52"
 hiltCompilerVersion = "2.52"
+plot = "0.1.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -89,6 +90,7 @@ androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.
 androidx-hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation", version.ref = "hiltNavigation" }
 dagger-android = { group = "com.google.dagger", name = "dagger-android", version.ref = "daggerAndroid" }
 dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltCompilerVersion" }
+plot = { group = "com.github.madrapps", name = "plot", version.ref = "plot" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
